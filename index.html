@@ -7,7 +7,9 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,600;12..96,800&family=Special+Elite&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
 <style>
+
 :root{
   --blue:#1c2b8f; --blue-deep:#121c63; --paper:#f6f5f0; --ink:#0d0f1a; --sticker:#ffd23f; --stamp:#d92d1c;
   --muted:#6b6f85; --line:#d9d8cf;
@@ -122,13 +124,91 @@ dialog::backdrop{background:rgba(8,12,45,.7)}
 .spin{display:inline-block;width:14px;height:14px;border:2px solid currentColor;border-right-color:transparent;border-radius:50%;animation:sp .7s linear infinite;vertical-align:-2px;margin-right:6px}
 @keyframes sp{to{transform:rotate(360deg)}}
 @media(prefers-reduced-motion:reduce){.spin{animation-duration:2s}.toast{transition:none}}
+
+[hidden]{display:none !important}
+#auth{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:calc(28px + env(safe-area-inset-top,0px)) 16px calc(28px + env(safe-area-inset-bottom,0px))}
+.authwrap{width:100%;max-width:400px}
+.brand.big{font-size:48px}
+.tag{font-size:18px;line-height:1.35;margin:8px 0 22px}
+.authcard{background:var(--paper);color:var(--ink);border-radius:10px;padding:20px 18px;box-shadow:0 8px 16px -8px rgba(0,0,0,.55)}
+.authcard label{display:block;font-size:13.5px;font-weight:600;margin:12px 0 5px}
+.authcard input{width:100%;background:#fff;border:2px solid var(--line);border-radius:10px;padding:12px;color:var(--ink)}
+.authcard .hint{margin-top:6px}
+.authcard .hint.msg{min-height:1.4em;color:var(--ink);font-size:14px}
+.gbtn{width:100%;display:flex;align-items:center;justify-content:center;gap:10px;background:#fff;color:var(--ink);border:2px solid var(--line);border-radius:10px;padding:13px;font-weight:700}
+.or{display:flex;align-items:center;gap:10px;margin:16px 0 0;color:var(--muted);font-size:13px}
+.or::before,.or::after{content:"";flex:1;border-top:2px solid var(--line)}
+.btn.block{width:100%;margin-top:14px;padding:14px;font-size:16px}
+.link{background:none;border:0;padding:0;color:var(--blue);font-weight:700;text-decoration:underline}
+.switch{margin:14px 0 0;font-size:14px;text-align:center}
+.scanrow{display:grid;grid-template-columns:2fr 1fr;gap:10px;margin-top:14px}
+
+
+.hbtns{display:flex;gap:10px}
+.gear{position:relative}
+.badge{position:absolute;top:-5px;right:-5px;min-width:19px;height:19px;padding:0 5px;border-radius:999px;background:var(--stamp);color:#fff;font-size:12px;font-weight:800;display:grid;place-items:center}
+.frh{font-size:15px;margin:22px 0 4px}
+.frrow{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:10px 0;border-top:2px solid var(--line)}
+.frrow b{font-size:16px}
+.frname{background:none;border:0;padding:6px 0;font-size:16px;font-weight:800;color:var(--ink);text-align:left}
+.frbtns{display:flex;gap:8px}
+.btn.sm{padding:8px 12px;font-size:14px}
+.sheet .msg{min-height:1.2em;color:var(--ink)}
+.chips{display:flex;gap:8px;flex-wrap:wrap;margin:10px 0 4px}
+.chip{background:#fff;border:2px solid var(--line);border-radius:999px;padding:6px 12px;font-weight:600;color:var(--ink)}
+.chip.on{background:var(--blue);border-color:var(--blue);color:var(--paper)}
+.vrow{display:flex;gap:12px;padding:12px 0;border-top:2px solid var(--line)}
+.vrow img,.vnoart{width:72px;height:72px;object-fit:cover;border-radius:3px;flex:none;background:var(--line)}
+.vnoart{display:grid;place-items:center;font-size:26px;color:var(--muted)}
+.vmeta{min-width:0;font-size:15px;line-height:1.3;overflow-wrap:anywhere}
+.vmeta .hint{margin:2px 0 0}
+.tags{display:flex;gap:6px;flex-wrap:wrap;align-items:center;margin-top:6px}
+.tag{font-size:12.5px;font-weight:700;padding:2px 8px;border-radius:4px;background:var(--blue);color:var(--paper)}
+.tag.trade{background:var(--sticker);color:var(--ink)}
+.owner{font-size:12.5px;font-weight:700;color:var(--muted)}
+.sheet .chk{display:flex;gap:10px;align-items:center;font-weight:600;margin:12px 0 0}
+.sheet .chk input{width:auto;accent-color:var(--blue);transform:scale(1.25)}
+.sheet .pips i{background:var(--line)}
+.sheet .pips i.on{background:var(--blue)}
+.sheet .cond{border-color:var(--muted);color:var(--muted)}
 </style>
 </head>
 <body>
+
+<!-- Sign in / create account -->
+<section id="auth" hidden>
+  <div class="authwrap">
+    <div class="brand big">Crate</div>
+    <p class="tag">Scan a record label. See the pressing, what it’s worth and how rare it is.</p>
+    <div class="authcard">
+      <button class="gbtn" id="gBtn" type="button">
+        <svg width="18" height="18" viewBox="0 0 48 48" aria-hidden="true"><path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/><path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/><path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"/><path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.15 1.45-4.92 2.3-8.16 2.3-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/></svg>
+        Continue with Google
+      </button>
+      <div class="or" id="orRow"><span>or use email</span></div>
+      <form id="authForm" novalidate>
+        <div id="aEmailWrap">
+          <label for="aEmail">Email</label>
+          <input id="aEmail" type="email" autocomplete="email" inputmode="email" autocapitalize="none" spellcheck="false">
+        </div>
+        <label for="aPass" id="aPassLbl">Password</label>
+        <input id="aPass" type="password" autocomplete="current-password">
+        <p class="hint" id="aHint"></p>
+        <button class="btn block" id="aSubmit" type="submit">Sign in</button>
+      </form>
+      <p class="hint msg" id="aMsg" role="status"></p>
+      <p class="switch" id="aSwitchRow"><span id="aSwitchTxt">New here?</span> <button class="link" id="aSwitch" type="button">Create an account</button></p>
+      <p class="switch" id="aForgotRow"><button class="link" id="aForgot" type="button">Forgot your password?</button></p>
+    </div>
+  </div>
+</section>
+
+<!-- App -->
+<div id="app" hidden>
 <div class="wrap">
   <header>
     <div class="brand">Crate</div>
-    <button class="gear" id="btnSettings" aria-label="Settings">⚙</button>
+    <div class="hbtns"><button class="gear" id="btnFriends" aria-label="Friends">👥<span class="badge" id="frBadge" hidden></span></button><button class="gear" id="btnSettings" aria-label="Account and settings">⚙</button></div>
   </header>
   <section class="totals" id="totals"></section>
   <div class="tools" id="tools">
@@ -143,8 +223,9 @@ dialog::backdrop{background:rgba(8,12,45,.7)}
   <main class="grid" id="grid"></main>
   <div id="emptyHost"></div>
 </div>
+</div>
 
-<button class="fab" id="fab">+ Add a record</button>
+<button class="fab" id="fab" hidden>+ Add a record</button>
 <div class="toast" id="toast" role="status"></div>
 
 <!-- Add -->
@@ -157,6 +238,7 @@ dialog::backdrop{background:rgba(8,12,45,.7)}
   <input type="file" id="cam" accept="image/*" capture="environment" hidden>
   <input type="file" id="lib" accept="image/*" hidden>
   <p class="hint" id="scanMsg">Fill the frame with the center label, in good light, with the text sharp.</p>
+  <p class="hint" id="quota"></p>
   <div id="runRow" hidden>
     <p class="hint" style="margin-top:12px">To pin down the exact pressing, photograph the etched text in the smooth ring near the center (the runout groove). Tilt the record so the light rakes across the letters.</p>
     <div class="scanrow" style="margin-top:8px">
@@ -190,22 +272,33 @@ dialog::backdrop{background:rgba(8,12,45,.7)}
 <!-- Detail -->
 <dialog id="dDetail"></dialog>
 
-<!-- Settings -->
+<!-- Friends -->
+<dialog id="dFriends"><div class="sheet">
+  <div class="row"><h2>Friends</h2><button class="close" data-close aria-label="Close">×</button></div>
+  <div id="frBody"></div>
+</div></dialog>
+
+<!-- A friend's crate, or the trade board -->
+<dialog id="dView"><div class="sheet">
+  <div class="row"><h2 id="vTitle"></h2><button class="close" data-close aria-label="Close">×</button></div>
+  <p class="hint" id="vSub"></p>
+  <div class="chips" id="vChips"></div>
+  <div id="vList"></div>
+</div></dialog>
+
+<!-- Account -->
 <dialog id="dSettings"><div class="sheet">
-  <div class="row"><h2>Settings</h2><button class="close" data-close aria-label="Close">×</button></div>
-  <label for="tok">Discogs personal access token</label>
-  <input id="tok" type="password" autocomplete="off" placeholder="Paste token">
-  <p class="hint">Create one at discogs.com/settings/developers (Generate new token). It stays in this browser only.</p>
-  <label for="akey">Anthropic API key (reads the label photos)</label>
-  <input id="akey" type="password" autocomplete="off" placeholder="sk-ant-…">
-  <p class="hint">Create one at console.anthropic.com. It stays in this browser only. A scan costs roughly a cent or less.</p>
-  <div class="btns"><button class="btn" id="saveTok">Save keys</button></div>
+  <div class="row"><h2>Account</h2><button class="close" data-close aria-label="Close">×</button></div>
+  <p style="margin:6px 0 0;font-weight:600;overflow-wrap:anywhere" id="acctEmail"></p>
+  <p class="hint" id="acctPlan"></p>
+  <div class="btns" style="margin-top:12px"><button class="btn alt" id="signOut">Sign out</button></div>
   <hr style="border:0;border-top:2px solid var(--line);margin:22px 0 4px">
   <div class="btns">
     <button class="btn alt" id="refreshAll">Refresh all prices</button>
     <button class="btn alt" id="expJson">Export backup</button>
     <button class="btn alt" id="expCsv">Export CSV</button>
     <button class="btn alt" id="impJson">Import backup</button>
+    <button class="btn alt" id="impLocal" hidden>Import records saved on this device</button>
   </div>
   <p class="hint" id="refreshMsg"></p>
   <input type="file" id="file" accept="application/json" hidden>
@@ -213,56 +306,167 @@ dialog::backdrop{background:rgba(8,12,45,.7)}
 
 <script>
 'use strict';
-const API = 'https://api.discogs.com';
-const LS_ITEMS = 'crate.items.v1', LS_TOKEN = 'crate.token.v1';
+/* ===== Config: Supabase > Project Settings > API ===== */
+const SUPABASE_URL = 'https://goecoazltcvqjaewfuna.supabase.co';
+const SUPABASE_ANON_KEY = 'sb_publishable_osPMIzC_h7JCV-VzaZAIhw_fm_uN3Zi';
+const FREE_SCANS = 15; /* display only. The server enforces FREE_SCANS_PER_MONTH. */
+
 const $ = s => document.querySelector(s);
 const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const configured = !/YOUR-/.test(SUPABASE_URL + SUPABASE_ANON_KEY) && !!window.supabase;
+const sb = configured ? window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY) : null;
 
-let items = [];
-try { items = JSON.parse(localStorage.getItem(LS_ITEMS) || '[]'); } catch { items = []; }
-let token = '';
-try { token = localStorage.getItem(LS_TOKEN) || ''; } catch {}
-let picked = null;
-const LS_AKEY = 'crate.akey.v1';
-let akey = '';
-try { akey = localStorage.getItem(LS_AKEY) || ''; } catch {}
-const VISION_MODEL = 'claude-sonnet-5-5';
-let lastMatrix = null;
+let friends = [], myUsername = null;
+let items = [], user = null, plan = 'free', scansUsed = 0, picked = null, lastMatrix = null;
+const LOCAL_KEY = 'crate.items.v1';
 
 const COND = {
-  'M':   {label:'Mint (M)',               key:'Mint (M)',               mult:1.5},
-  'NM':  {label:'Near Mint (NM)',         key:'Near Mint (NM or M-)',   mult:1.3},
-  'VG+': {label:'Very Good Plus (VG+)',   key:'Very Good Plus (VG+)',   mult:1.0},
-  'VG':  {label:'Very Good (VG)',         key:'Very Good (VG)',         mult:0.7},
-  'G+':  {label:'Good Plus (G+)',         key:'Good Plus (G+)',         mult:0.45},
-  'G':   {label:'Good (G)',               key:'Good (G)',               mult:0.3},
-  'F':   {label:'Fair (F)',               key:'Fair (F)',               mult:0.2},
-  'P':   {label:'Poor (P)',               key:'Poor (P)',               mult:0.1}
+  'M':   {label:'Mint (M)',               mult:1.5},
+  'NM':  {label:'Near Mint (NM)',         mult:1.3},
+  'VG+': {label:'Very Good Plus (VG+)',   mult:1.0},
+  'VG':  {label:'Very Good (VG)',         mult:0.7},
+  'G+':  {label:'Good Plus (G+)',         mult:0.45},
+  'G':   {label:'Good (G)',               mult:0.3},
+  'F':   {label:'Fair (F)',               mult:0.2},
+  'P':   {label:'Poor (P)',               mult:0.1}
 };
+const SUGG_KEY = { 'M':'Mint (M)', 'NM':'Near Mint (NM or M-)', 'VG+':'Very Good Plus (VG+)', 'VG':'Very Good (VG)', 'G+':'Good Plus (G+)', 'G':'Good (G)', 'F':'Fair (F)', 'P':'Poor (P)' };
 const condOptions = sel => Object.entries(COND).map(([k,v]) => `<option value="${esc(k)}"${k===sel?' selected':''}>${esc(v.label)}</option>`).join('');
 
-function save(){ try { localStorage.setItem(LS_ITEMS, JSON.stringify(items)); } catch { toast('Could not save. Browser storage is full or blocked.'); } }
 function toast(msg){ const t = $('#toast'); t.textContent = msg; t.classList.add('show'); clearTimeout(toast._t); toast._t = setTimeout(() => t.classList.remove('show'), 3200); }
 const money = n => n == null ? '—' : new Intl.NumberFormat('en-US',{style:'currency',currency:'USD',maximumFractionDigits: n < 100 ? 2 : 0}).format(n);
 const num = n => new Intl.NumberFormat('en-US').format(n ?? 0);
 const cleanName = s => String(s || '').replace(/\s\(\d+\)$/, '');
 
-/* ---------- Discogs ---------- */
-async function api(path, params = {}){
-  if(!token) throw new Error('Add your Discogs token in Settings first.');
-  const u = new URL(API + path);
-  Object.entries(params).forEach(([k,v]) => u.searchParams.set(k, v));
-  u.searchParams.set('token', token);
-  let r;
-  try{ r = await fetch(u.toString()); }
-  catch{ throw new Error('Could not reach Discogs. If you opened this file from a preview or the Files app, host it on GitHub Pages or Netlify and open that link.'); }
-  if(r.status === 401) throw new Error('Discogs rejected the token. Check it in Settings.');
-  if(r.status === 429) throw new Error('Discogs rate limit hit. Wait a minute and try again.');
-  if(r.status === 404) return null;
-  if(!r.ok) throw new Error('Discogs error ' + r.status);
-  return r.json();
+/* ---------- Server calls ---------- */
+async function fn(name, body){
+  const { data, error } = await sb.functions.invoke(name, { body });
+  if(error){
+    let j = null;
+    try { j = await error.context.json(); } catch {}
+    const e = new Error((j && (j.message || j.error)) || error.message || 'Request failed');
+    e.code = j && j.error; throw e;
+  }
+  if(data && data.error){ const e = new Error(data.message || data.error); e.code = data.error; throw e; }
+  return data;
+}
+async function pull(id){ const d = await fn('discogs', { action: 'release', id }); return { rel: d.rel, stats: d.stats }; }
+async function scanPhoto(kind, b64){
+  const d = await fn('scan', { kind, image: b64 });
+  scansUsed++; paintQuota();
+  return d.result || {};
 }
 
+/* ---------- Accounts ---------- */
+let authMode = 'signin', entering = false, enteredFor = null;
+
+function friendlyAuthError(e){
+  const m = (e && e.message) || 'Something went wrong.';
+  if(/invalid login/i.test(m)) return 'Email or password is wrong.';
+  if(/already registered/i.test(m)) return 'That email already has an account. Sign in instead.';
+  if(/not confirmed/i.test(m)) return 'Confirm your email first. Check your inbox for the link.';
+  if(/rate limit|too many/i.test(m)) return 'Too many attempts. Wait a minute and try again.';
+  return m;
+}
+function setAuthMode(m){
+  authMode = m;
+  const su = m === 'signup', rs = m === 'reset';
+  $('#gBtn').hidden = rs; $('#orRow').hidden = rs; $('#aEmailWrap').hidden = rs;
+  $('#aSubmit').textContent = rs ? 'Set new password' : su ? 'Create account' : 'Sign in';
+  $('#aPassLbl').textContent = rs ? 'New password' : 'Password';
+  $('#aPass').setAttribute('autocomplete', su || rs ? 'new-password' : 'current-password');
+  $('#aSwitchRow').hidden = rs; $('#aForgotRow').hidden = su || rs;
+  $('#aSwitchTxt').textContent = su ? 'Already have an account?' : 'New here?';
+  $('#aSwitch').textContent = su ? 'Sign in' : 'Create an account';
+  $('#aHint').textContent = su || rs ? 'At least 8 characters.' : '';
+  $('#aMsg').textContent = '';
+}
+function showAuth(mode){
+  $('#auth').hidden = false; $('#app').hidden = true; $('#fab').hidden = true;
+  setAuthMode(mode || 'signin');
+  if(!configured){
+    $('#aMsg').textContent = 'Setup needed: add your Supabase URL and key at the top of index.html.';
+    $('#aSubmit').disabled = true; $('#gBtn').disabled = true;
+  }
+}
+
+async function enterApp(u){
+  if(entering) return;
+  entering = true;
+  try{
+    user = u; enteredFor = u.id;
+    await Promise.all([loadAll(), refreshUsage()]);
+    $('#auth').hidden = true; $('#app').hidden = false; $('#fab').hidden = false;
+    render();
+    loadFriends().catch(() => {});
+    offerLocalImport();
+  }catch(e){
+    enteredFor = null; user = null;
+    showAuth('signin');
+    $('#aMsg').textContent = 'Could not load your crate: ' + e.message;
+  }
+  entering = false;
+}
+
+async function refreshUsage(){
+  const m = new Date().toISOString().slice(0, 7);
+  const [p, u] = await Promise.all([
+    sb.from('profiles').select('plan,username').maybeSingle(),
+    sb.from('usage').select('scans').eq('month', m).maybeSingle()
+  ]);
+  plan = (p.data && p.data.plan) || 'free';
+  myUsername = (p.data && p.data.username) || null;
+  scansUsed = (u.data && u.data.scans) || 0;
+  paintQuota();
+}
+function paintQuota(){
+  const t = plan === 'pro' ? 'Pro plan: unlimited scans.' : `${Math.max(0, FREE_SCANS - scansUsed)} of ${FREE_SCANS} free scans left this month.`;
+  $('#quota').textContent = t; $('#acctPlan').textContent = (plan === 'pro' ? 'Pro plan' : 'Free plan') + '. ' + t;
+}
+
+/* ---------- Records in the cloud ---------- */
+function fromRow(r){
+  const s = r.snapshot || {};
+  return {
+    uid: r.id, id: r.discogs_id, added: new Date(r.added_at).getTime(),
+    media: r.media || 'VG+', sleeve: r.sleeve || 'VG+', paid: r.paid == null ? null : +r.paid, notes: r.notes || '',
+    edition: { size: r.edition_size || undefined, copy: r.edition_copy || undefined, source: r.edition_source || undefined, manual: !!r.edition_manual },
+    matrix: r.matrix || [],
+    hidden: !!r.hidden, forTrade: !!r.for_trade,
+    artist: s.artist, title: s.title, year: s.year, label: s.label, catno: s.catno, country: s.country,
+    format: s.format, cover: s.cover, coverLg: s.coverLg, stats: s.stats
+  };
+}
+function toRow(it){
+  const e = it.edition || {};
+  return {
+    discogs_id: it.id, media: it.media, sleeve: it.sleeve, paid: it.paid, notes: it.notes || '',
+    edition_size: e.size || null, edition_copy: e.copy || null, edition_source: e.source || null, edition_manual: !!e.manual,
+    matrix: it.matrix || [], hidden: !!it.hidden, for_trade: !!it.forTrade,
+    snapshot: { artist: it.artist, title: it.title, year: it.year, label: it.label, catno: it.catno, country: it.country,
+      format: it.format, cover: it.cover, coverLg: it.coverLg, stats: it.stats }
+  };
+}
+async function loadAll(){
+  const { data, error } = await sb.from('records').select('*').order('added_at', { ascending: false });
+  if(error) throw error;
+  items = data.map(fromRow);
+}
+async function insertItem(it){
+  const { data, error } = await sb.from('records').insert(toRow(it)).select().single();
+  if(error) throw error;
+  it.uid = data.id; it.added = new Date(data.added_at).getTime();
+}
+async function saveItem(it){
+  const { error } = await sb.from('records').update(toRow(it)).eq('id', it.uid);
+  if(error) toast('Could not save: ' + error.message);
+}
+async function deleteItem(uid){
+  const { error } = await sb.from('records').delete().eq('id', uid);
+  if(error) toast('Could not remove: ' + error.message);
+}
+
+/* ---------- Release data ---------- */
 function detectEdition(rel){
   const t = [rel.notes || '', ...(rel.formats || []).flatMap(f => [...(f.descriptions || []), f.text || ''])].join(' \n ');
   if(!/limit|press|numbered|edition|copies/i.test(t)) return null;
@@ -279,32 +483,6 @@ function detectEdition(rel){
   }
   return null;
 }
-
-async function pull(id){
-  const [rel, mk, ps] = await Promise.all([
-    api('/releases/' + id, { curr_abbr: 'USD' }),
-    api('/marketplace/stats/' + id, { curr_abbr: 'USD' }).catch(() => null),
-    api('/marketplace/price_suggestions/' + id).catch(() => null)
-  ]);
-  if(!rel) throw new Error('Release not found on Discogs.');
-  let sugg = null;
-  if(ps && typeof ps === 'object' && !ps.message){
-    const ok = Object.values(ps).every(v => v && v.currency === 'USD');
-    if(ok && Object.keys(ps).length) sugg = Object.fromEntries(Object.entries(ps).map(([k,v]) => [k, v.value]));
-  }
-  return {
-    rel,
-    stats: {
-      have: rel.community?.have || 0,
-      want: rel.community?.want || 0,
-      lowest: mk?.lowest_price?.value ?? rel.lowest_price ?? null,
-      forSale: mk?.num_for_sale ?? rel.num_for_sale ?? 0,
-      sugg,
-      updated: Date.now()
-    }
-  };
-}
-
 function fillFromRelease(it, rel){
   it.artist = (rel.artists || []).map(a => cleanName(a.name)).join(', ') || it.artist;
   it.title = rel.title || it.title;
@@ -324,7 +502,8 @@ function fillFromRelease(it, rel){
 function estimate(it){
   const s = it.stats; if(!s) return null;
   const c = COND[it.media] || COND['VG+'];
-  if(s.sugg && s.sugg[c.key] != null) return { v: s.sugg[c.key], basis: 'Discogs price suggestion for ' + c.label };
+  const key = SUGG_KEY[it.media] || SUGG_KEY['VG+'];
+  if(s.sugg && s.sugg[key] != null) return { v: s.sugg[key], basis: 'Discogs price suggestion for ' + c.label };
   if(s.lowest != null) return { v: s.lowest * c.mult, basis: 'Scaled from the lowest current listing (' + money(s.lowest) + ')' };
   return null;
 }
@@ -395,42 +574,11 @@ function render(){
   $('#emptyHost').innerHTML = items.length ? '' : `
     <div class="empty">
       <h2>Your crate is empty</h2>
-      <p>Crate looks up each pressing on Discogs and tells you what it’s worth and how scarce it is.</p>
-      <ol>
-        <li>Open <a href="https://www.discogs.com/settings/developers" target="_blank" rel="noopener">Discogs developer settings</a> and generate a personal access token.</li>
-        <li>Paste it in Settings (the gear, top right).</li>
-        <li>Add an Anthropic API key there too, so Crate can read label photos.</li>
-        <li>Tap Add a record, then Scan a record label.</li>
-      </ol>
+      <p>Tap Add a record, then Scan a record label. Crate finds the pressing on Discogs and tells you what it’s worth and how scarce it is.</p>
     </div>`;
 }
 
-/* ---------- Add flow ---------- */
-function openAdd(){
-  $('#aMedia').innerHTML = condOptions('VG+');
-  $('#aSleeve').innerHTML = condOptions('VG+');
-  $('#aPaid').value = '';
-  $('#addbar').hidden = true; picked = null; lastMatrix = null; $('#runRow').hidden = true; $('#mText').value = '';
-  $('#dAdd').showModal();
-  setTimeout(() => $('#q').focus(), 50);
-}
-function renderResults(res, autopick){
-  const box = $('#results');
-  if(!res.length){ box.innerHTML = '<li class="hint">No vinyl releases found. Try fewer words, or the catalog number.</li>'; box._res = []; $('#runRow').hidden = true; return; }
-  box.innerHTML = res.map((r,i) => `<li><button data-i="${i}" aria-pressed="false">
-      <img src="${esc(r.thumb || '')}" alt="" referrerpolicy="no-referrer">
-      <span><b>${esc(cleanName(r.title))}</b><small>${esc([r.year, r.country, (r.label||[])[0], r.catno].filter(Boolean).join(', '))}<br>${esc((r.format||[]).join(', '))}</small>${r._m >= 3 ? `<small style="color:var(--blue);font-weight:700;margin-top:3px">Runout matches: ${esc(r._mx)}</small>` : r._m > 0 ? '<small style="margin-top:3px">Partial runout match</small>' : ''}</span>
-    </button></li>`).join('');
-  box._res = res;
-  $('#runRow').hidden = false;
-  if(autopick) box.querySelector('button[data-i="0"]').click();
-}
-
-/* ---------- Label scan ---------- */
-const LABEL_PROMPT = `This is a photo of the center label of a vinyl record. Read the printed text exactly as written. Return only a JSON object with these keys:
-"artist", "title" (album or single title if printed; null if only track titles appear), "label" (record label name), "catno" (catalog number exactly as printed, keeping prefixes, dashes and spaces), "country" (from text like "Made in Germany", else null), "year" (the ℗ or © year as a number, else null), "side" (A, B, 1, 2 and so on, else null), "tracks" (array of track titles you can read), "other" (short note on anything distinguishing such as promo, stereo, test pressing, or null).
-Use null for anything you cannot read. Do not guess.`;
-
+/* ---------- Photos ---------- */
 async function decodeImage(file){
   if(window.createImageBitmap){
     try{ return await createImageBitmap(file, { imageOrientation: 'from-image' }); }
@@ -457,32 +605,78 @@ async function photoToJpeg(file, max = 1600){
   if(img.close) img.close();
   return c.toDataURL('image/jpeg', 0.85).split(',')[1];
 }
-async function readLabel(b64){
-  const r = await fetch('https://api.anthropic.com/v1/messages', {
-    method: 'POST',
-    headers: { 'content-type': 'application/json', 'x-api-key': akey, 'anthropic-version': '2023-06-01', 'anthropic-dangerous-direct-browser-access': 'true' },
-    body: JSON.stringify({ model: VISION_MODEL, max_tokens: 500, messages: [{ role: 'user', content: [
-      { type: 'image', source: { type: 'base64', media_type: 'image/jpeg', data: b64 } },
-      { type: 'text', text: LABEL_PROMPT } ] }] })
-  });
-  if(r.status === 401) throw new Error('Anthropic rejected the API key. Check it in Settings.');
-  if(r.status === 429) throw new Error('Too many scans at once. Wait a moment and try again.');
-  if(!r.ok) throw new Error('Label scan failed (error ' + r.status + ').');
-  const d = await r.json();
-  const text = (d.content || []).map(c => c.text || '').join('');
-  const m = text.match(/\{[\s\S]*\}/);
-  if(!m) throw new Error('Could not read the label. Try a sharper, brighter photo.');
-  try { return JSON.parse(m[0]); } catch { throw new Error('Could not read the label. Try a sharper, brighter photo.'); }
+
+/* ---------- Add flow ---------- */
+function openAdd(){
+  $('#aMedia').innerHTML = condOptions('VG+');
+  $('#aSleeve').innerHTML = condOptions('VG+');
+  $('#aPaid').value = '';
+  $('#addbar').hidden = true; picked = null; lastMatrix = null; $('#runRow').hidden = true; $('#mText').value = '';
+  paintQuota();
+  $('#dAdd').showModal();
+  setTimeout(() => $('#q').focus(), 50);
 }
+function renderResults(res, autopick){
+  const box = $('#results');
+  if(!res.length){ box.innerHTML = '<li class="hint">No vinyl releases found. Try fewer words, or the catalog number.</li>'; box._res = []; $('#runRow').hidden = true; return; }
+  box.innerHTML = res.map((r,i) => `<li><button data-i="${i}" aria-pressed="false">
+      <img src="${esc(r.thumb || '')}" alt="" referrerpolicy="no-referrer">
+      <span><b>${esc(cleanName(r.title))}</b><small>${esc([r.year, r.country, (r.label||[])[0], r.catno].filter(Boolean).join(', '))}<br>${esc((r.format||[]).join(', '))}</small>${r._m >= 3 ? `<small style="color:var(--blue);font-weight:700;margin-top:3px">Runout matches: ${esc(r._mx)}</small>` : r._m > 0 ? '<small style="margin-top:3px">Partial runout match</small>' : ''}</span>
+    </button></li>`).join('');
+  box._res = res;
+  $('#runRow').hidden = false;
+  if(autopick) box.querySelector('button[data-i="0"]').click();
+}
+async function search(){
+  const q = $('#q').value.trim(); if(!q) return;
+  const box = $('#results');
+  box.innerHTML = '<li class="hint"><span class="spin"></span>Searching Discogs…</li>';
+  $('#addbar').hidden = true; picked = null; lastMatrix = null;
+  try{
+    const params = /^\d{8,14}$/.test(q.replace(/\s/g,'')) ? { barcode: q.replace(/\s/g,'') } : { q };
+    const d = await fn('discogs', { action: 'search', params });
+    renderResults(d.results || []);
+  }catch(e){ box.innerHTML = `<li class="hint">${esc(e.message)}</li>`; }
+}
+$('#results').addEventListener('click', e => {
+  const b = e.target.closest('button[data-i]'); if(!b) return;
+  const box = $('#results');
+  box.querySelectorAll('button').forEach(x => x.setAttribute('aria-pressed','false'));
+  b.setAttribute('aria-pressed','true');
+  picked = box._res[+b.dataset.i];
+  $('#addbar').hidden = false;
+  $('#addbar').scrollIntoView({ block: 'nearest' });
+});
+async function addPicked(){
+  if(!picked) return;
+  const btn = $('#doAdd'); btn.disabled = true; btn.innerHTML = '<span class="spin"></span>Adding…';
+  try{
+    const { rel, stats } = await pull(picked.id);
+    const it = {
+      id: picked.id, added: Date.now(),
+      media: $('#aMedia').value, sleeve: $('#aSleeve').value,
+      paid: $('#aPaid').value ? +$('#aPaid').value : null,
+      notes: '', edition: {}, matrix: lastMatrix || [], stats
+    };
+    fillFromRelease(it, rel);
+    await insertItem(it);
+    items.push(it); render();
+    $('#addbar').hidden = true; picked = null; lastMatrix = null; $('#runRow').hidden = true; $('#results').innerHTML = ''; $('#q').value = ''; $('#aPaid').value = '';
+    $('#scanMsg').textContent = 'Added ' + it.artist + ', ' + it.title + '. Scan the next one, or close this.';
+    toast('Added ' + it.artist + ' – ' + it.title);
+  }catch(e){ toast(e.message); }
+  btn.disabled = false; btn.textContent = 'Add to crate';
+}
+
+/* ---------- Label scan ---------- */
 async function scanSearch(info){
-  const base = { type: 'release', format: 'Vinyl', per_page: 15 };
   const tries = [];
   if(info.catno && info.label) tries.push({ catno: info.catno, label: info.label });
   if(info.catno) tries.push({ catno: info.catno });
   if(info.artist && info.title) tries.push({ artist: info.artist, release_title: info.title });
   if(info.artist && info.tracks && info.tracks[0]) tries.push({ q: info.artist + ' ' + info.tracks[0] });
-  for(const t of tries){
-    const d = await api('/database/search', { ...base, ...t });
+  for(const params of tries){
+    const d = await fn('discogs', { action: 'search', params });
     if(d && d.results && d.results.length){
       const c = (info.country || '').toLowerCase();
       const score = r => (c && r.country && c.includes(r.country.toLowerCase()) ? 2 : 0) + (info.year && +r.year === +info.year ? 1 : 0);
@@ -491,8 +685,26 @@ async function scanSearch(info){
   }
   return [];
 }
+async function onPhoto(file){
+  if(!file) return;
+  const msg = $('#scanMsg');
+  $('#addbar').hidden = true; picked = null; lastMatrix = null; $('#runRow').hidden = true; $('#results').innerHTML = '';
+  msg.innerHTML = '<span class="spin"></span>Reading the label…';
+  try{
+    const info = await scanPhoto('label', await photoToJpeg(file));
+    const read = [info.artist, info.title, info.label, info.catno].filter(Boolean).join(', ');
+    if(!read){ msg.textContent = 'Nothing legible on that photo. Try again with the label filling the frame.'; return; }
+    msg.innerHTML = 'Read: ' + esc(read) + '<br><span class="spin"></span>Matching on Discogs…';
+    $('#q').value = [info.artist, info.catno].filter(Boolean).join(' ');
+    const res = await scanSearch(info);
+    renderResults(res, true);
+    msg.textContent = res.length
+      ? 'Read: ' + read + '. Best match is selected. Check the year, country and catalog number, then add it.'
+      : 'Read: ' + read + '. No match on Discogs. Edit the search below and try again.';
+  }catch(e){ msg.textContent = e.message; }
+}
+
 /* ---------- Runout (matrix) step ---------- */
-const RUNOUT_PROMPT = `This is a photo of the runout groove (the smooth ring near the center) of a vinyl record, with etched or stamped text. Read every string you can: matrix numbers, side marks, stamper codes, mastering engineer initials or names, plant marks. Return only a JSON object: {"matrix": [each separate etched string exactly as written, keeping punctuation and spacing, using ? for any uncertain character], "other": a short note or null}. If nothing is readable return {"matrix": [], "other": null}. Do not guess.`;
 const norm = s => String(s || '').toLowerCase().replace(/[^a-z0-9]/g, '');
 const toks = s => String(s || '').toLowerCase().match(/[a-z0-9]{3,}/g) || [];
 function matrixScore(read, ids){
@@ -512,22 +724,6 @@ function matrixScore(read, ids){
   }
   return { score, best, id: bestId };
 }
-async function visionJson(b64, prompt){
-  const r = await fetch('https://api.anthropic.com/v1/messages', {
-    method: 'POST',
-    headers: { 'content-type': 'application/json', 'x-api-key': akey, 'anthropic-version': '2023-06-01', 'anthropic-dangerous-direct-browser-access': 'true' },
-    body: JSON.stringify({ model: VISION_MODEL, max_tokens: 500, messages: [{ role: 'user', content: [
-      { type: 'image', source: { type: 'base64', media_type: 'image/jpeg', data: b64 } },
-      { type: 'text', text: prompt } ] }] })
-  });
-  if(r.status === 401) throw new Error('Anthropic rejected the API key. Check it in Settings.');
-  if(!r.ok) throw new Error('Photo scan failed (error ' + r.status + ').');
-  const d = await r.json();
-  const text = (d.content || []).map(c => c.text || '').join('');
-  const m = text.match(/\{[\s\S]*\}/);
-  if(!m) throw new Error('Could not read that photo. Try again with sharper focus.');
-  try { return JSON.parse(m[0]); } catch { throw new Error('Could not read that photo. Try again with sharper focus.'); }
-}
 async function compareMatrix(read){
   const msg = $('#scanMsg');
   const all = $('#results')._res || [];
@@ -535,13 +731,9 @@ async function compareMatrix(read){
   if(!cands.length){ msg.textContent = 'Find the record first, then compare the runout.'; return; }
   lastMatrix = read;
   msg.innerHTML = 'Read: ' + esc(read.join(' / ')) + '<br><span class="spin"></span>Comparing with ' + cands.length + ' pressings…';
-  const rels = [];
-  for(let i = 0; i < cands.length; i += 4){
-    rels.push(...await Promise.all(cands.slice(i, i + 4).map(c => api('/releases/' + c.id).catch(() => null))));
-  }
-  cands.forEach((c, i) => {
-    const ids = ((rels[i] && rels[i].identifiers) || []).map(x => x.value).filter(Boolean);
-    const m = matrixScore(read, ids);
+  const d = await fn('discogs', { action: 'identifiers', ids: cands.map(c => c.id) });
+  cands.forEach(c => {
+    const m = matrixScore(read, (d.identifiers && d.identifiers[c.id]) || []);
     c._m = m.best; c._mx = m.id; c._s = m.score;
   });
   const sorted = [...cands].sort((a, b) => b._s - a._s).concat(all.slice(10));
@@ -556,79 +748,14 @@ async function compareMatrix(read){
 async function onRunout(file){
   if(!file) return;
   const msg = $('#scanMsg');
-  const all = $('#results')._res || [];
-  const cands = all.slice(0, 10);
-  if(!akey){ msg.textContent = 'Add your Anthropic API key in Settings to scan.'; return; }
-  if(!cands.length){ msg.textContent = 'Find the record first, then photograph the runout.'; return; }
+  if(!($('#results')._res || []).length){ msg.textContent = 'Find the record first, then photograph the runout.'; return; }
   msg.innerHTML = '<span class="spin"></span>Reading the etched text…';
   try{
-    const out = await visionJson(await photoToJpeg(file, 2000), RUNOUT_PROMPT);
+    const out = await scanPhoto('runout', await photoToJpeg(file, 2000));
     const read = (out.matrix || []).map(String).filter(x => norm(x).length >= 4);
     if(!read.length){ msg.textContent = 'Could not read any etched text. Tilt the record so the light rakes across the letters, then try again.'; return; }
     await compareMatrix(read);
   }catch(e){ msg.textContent = e.message; }
-}
-
-async function onPhoto(file){
-  if(!file) return;
-  const msg = $('#scanMsg');
-  if(!akey){ msg.textContent = 'Add your Anthropic API key in Settings to scan labels.'; return; }
-  $('#addbar').hidden = true; picked = null; lastMatrix = null; $('#runRow').hidden = true; $('#results').innerHTML = '';
-  msg.innerHTML = '<span class="spin"></span>Reading the label…';
-  try{
-    const info = await readLabel(await photoToJpeg(file));
-    const read = [info.artist, info.title, info.label, info.catno].filter(Boolean).join(', ');
-    if(!read){ msg.textContent = 'Nothing legible on that photo. Try again with the label filling the frame.'; return; }
-    msg.innerHTML = 'Read: ' + esc(read) + '<br><span class="spin"></span>Matching on Discogs…';
-    $('#q').value = [info.artist, info.catno].filter(Boolean).join(' ');
-    const res = await scanSearch(info);
-    renderResults(res, true);
-    msg.textContent = res.length
-      ? 'Read: ' + read + '. Best match is selected. Check the year, country and catalog number, then add it.'
-      : 'Read: ' + read + '. No match on Discogs. Edit the search below and try again.';
-  }catch(e){ msg.textContent = e.message; }
-}
-
-async function search(){
-  const q = $('#q').value.trim(); if(!q) return;
-  const box = $('#results');
-  box.innerHTML = '<li class="hint"><span class="spin"></span>Searching Discogs…</li>';
-  $('#addbar').hidden = true; picked = null; lastMatrix = null;
-  try{
-    const params = { type: 'release', format: 'Vinyl', per_page: 15 };
-    if(/^\d{8,14}$/.test(q.replace(/\s/g,''))) params.barcode = q.replace(/\s/g,''); else params.q = q;
-    const d = await api('/database/search', params);
-    renderResults(d?.results || []);
-  }catch(e){ box.innerHTML = `<li class="hint">${esc(e.message)}</li>`; }
-}
-$('#results').addEventListener('click', e => {
-  const b = e.target.closest('button[data-i]'); if(!b) return;
-  const box = $('#results');
-  box.querySelectorAll('button').forEach(x => x.setAttribute('aria-pressed','false'));
-  b.setAttribute('aria-pressed','true');
-  picked = box._res[+b.dataset.i];
-  $('#addbar').hidden = false;
-  $('#addbar').scrollIntoView({ block: 'nearest' });
-});
-async function addPicked(){
-  if(!picked) return;
-  const btn = $('#doAdd'); btn.disabled = true; btn.innerHTML = '<span class="spin"></span>Adding…';
-  try{
-    const { rel, stats } = await pull(picked.id);
-    const it = {
-      uid: crypto.randomUUID ? crypto.randomUUID() : String(Date.now() + Math.random()),
-      id: picked.id, added: Date.now(),
-      media: $('#aMedia').value, sleeve: $('#aSleeve').value,
-      paid: $('#aPaid').value ? +$('#aPaid').value : null,
-      notes: '', edition: {}, matrix: lastMatrix, stats
-    };
-    fillFromRelease(it, rel);
-    items.push(it); save(); render();
-    $('#addbar').hidden = true; picked = null; lastMatrix = null; $('#runRow').hidden = true; $('#results').innerHTML = ''; $('#q').value = ''; $('#aPaid').value = '';
-    $('#scanMsg').textContent = 'Added ' + it.artist + ', ' + it.title + '. Scan the next one, or close this.';
-    toast('Added ' + it.artist + ' – ' + it.title);
-  }catch(e){ toast(e.message); }
-  btn.disabled = false; btn.textContent = 'Add to crate';
 }
 
 /* ---------- Detail ---------- */
@@ -665,6 +792,9 @@ function openDetail(uid){
       <div><label for="ePaid">What you paid</label><input id="ePaid" type="number" inputmode="decimal" min="0" step="0.01" value="${esc(it.paid ?? '')}"></div>
       <div></div>
     </div>
+    <label class="chk"><input type="checkbox" id="eTrade"${it.forTrade ? ' checked' : ''}> Open to trade</label>
+    <label class="chk"><input type="checkbox" id="eHidden"${it.hidden ? ' checked' : ''}> Hide from friends</label>
+    <p class="hint">Friends see title, condition and rarity. They never see prices, what you paid, your notes or your etching. Hidden records don’t show up for them at all.</p>
     <label for="eMatrix">Runout etching</label>
     <textarea id="eMatrix" placeholder="One etched string per line">${esc((it.matrix || []).join('\n'))}</textarea>
     <label for="eNotes">Notes</label>
@@ -684,32 +814,156 @@ function openDetail(uid){
     else { delete it.edition.size; delete it.edition.source; it.edition.manual = true; }
     if(copy > 0) it.edition.copy = copy; else delete it.edition.copy;
     it.paid = $('#ePaid').value === '' ? null : +$('#ePaid').value;
+    it.hidden = $('#eHidden').checked; it.forTrade = $('#eTrade').checked;
     it.matrix = $('#eMatrix').value.split('\n').map(x => x.trim()).filter(Boolean);
     it.notes = $('#eNotes').value;
-    save(); render(); openDetail(uid);
+    saveItem(it); render(); openDetail(uid);
   };
-  ['#eMedia','#eSleeve','#eSize','#eCopy','#ePaid','#eMatrix','#eNotes'].forEach(sel => $(sel).addEventListener('change', upd));
+  ['#eMedia','#eSleeve','#eSize','#eCopy','#ePaid','#eTrade','#eHidden','#eMatrix','#eNotes'].forEach(sel => $(sel).addEventListener('change', upd));
   $('#eRefresh').onclick = async () => {
     const b = $('#eRefresh'); b.innerHTML = '<span class="spin"></span>Refreshing…'; b.disabled = true;
-    try{ const { rel, stats } = await pull(it.id); it.stats = stats; fillFromRelease(it, rel); save(); render(); openDetail(uid); toast('Prices updated'); }
+    try{ const { rel, stats } = await pull(it.id); it.stats = stats; fillFromRelease(it, rel); await saveItem(it); render(); openDetail(uid); toast('Prices updated'); }
     catch(err){ toast(err.message); b.disabled = false; b.textContent = 'Refresh price'; }
   };
-  $('#eDelete').onclick = () => {
+  $('#eDelete').onclick = async () => {
     if(confirm('Remove ' + it.artist + ' – ' + it.title + ' from your crate?')){
-      items = items.filter(x => x.uid !== uid); save(); render(); d.close();
+      await deleteItem(uid); items = items.filter(x => x.uid !== uid); render(); d.close();
     }
   };
   if(!d.open) d.showModal();
 }
 
-/* ---------- Settings / data ---------- */
+
+/* ---------- Friends ---------- */
+async function rpc(name, args){
+  const { data, error } = await sb.rpc(name, args);
+  if(error) throw new Error(error.message);
+  return data;
+}
+async function loadFriends(){
+  friends = (await rpc('list_friends')) || [];
+  const n = friends.filter(f => f.status === 'pending' && f.incoming).length;
+  const b = $('#frBadge'); b.hidden = !n; b.textContent = n;
+}
+async function openFriends(){
+  $('#dFriends').showModal();
+  $('#frBody').innerHTML = '<p class="hint"><span class="spin"></span>Loading…</p>';
+  try{ await loadFriends(); }catch(e){ $('#frBody').innerHTML = `<p class="hint">${esc(e.message)}</p>`; return; }
+  paintFriends();
+}
+function paintFriends(){
+  const b = $('#frBody');
+  if(!myUsername){
+    b.innerHTML = `<p style="margin:12px 0 0">Pick a username so friends can find you.</p>
+      <label for="frName">Username</label>
+      <input id="frName" maxlength="20" autocapitalize="none" autocomplete="off" spellcheck="false" placeholder="e.g. djjoaquin">
+      <p class="hint">3 to 20 letters, numbers or underscores.</p>
+      <div class="btns"><button class="btn" id="frSave">Save username</button></div>
+      <p class="hint msg" id="frMsg"></p>`;
+    return;
+  }
+  const incoming = friends.filter(f => f.status === 'pending' && f.incoming);
+  const sent = friends.filter(f => f.status === 'pending' && !f.incoming);
+  const mine = friends.filter(f => f.status === 'accepted');
+  b.innerHTML = `
+    <p style="margin:10px 0 0;font-weight:600">You are @${esc(myUsername)}</p>
+    <p class="hint">Friends see your titles, condition and rarity. They never see prices, what you paid, your notes, or records you hide.</p>
+    <label for="frAdd">Add a friend by username</label>
+    <div class="row"><input id="frAdd" autocapitalize="none" autocomplete="off" spellcheck="false" placeholder="their username"><button class="btn" id="frSend">Send request</button></div>
+    <p class="hint msg" id="frMsg"></p>
+    ${incoming.length ? `<h3 class="frh">Requests</h3>${incoming.map(f => `<div class="frrow"><b>@${esc(f.username)}</b><span class="frbtns"><button class="btn sm" data-act="accept" data-id="${esc(f.friendship_id)}">Accept</button><button class="btn sm alt" data-act="decline" data-id="${esc(f.friendship_id)}">Decline</button></span></div>`).join('')}` : ''}
+    <h3 class="frh">Friends</h3>
+    ${mine.length ? mine.map(f => `<div class="frrow"><button class="frname" data-act="open" data-uid="${esc(f.user_id)}" data-name="${esc(f.username)}">@${esc(f.username)}</button><button class="btn sm alt" data-act="remove" data-id="${esc(f.friendship_id)}">Remove</button></div>`).join('') : '<p class="hint">No friends yet.</p>'}
+    ${sent.length ? `<h3 class="frh">Waiting for a reply</h3>${sent.map(f => `<div class="frrow"><b>@${esc(f.username)}</b><button class="btn sm alt" data-act="remove" data-id="${esc(f.friendship_id)}">Cancel</button></div>`).join('')}` : ''}
+    <div class="btns"><button class="btn alt" id="frTrade">Trade board</button></div>`;
+}
+$('#frBody').addEventListener('click', async e => {
+  const t = e.target.closest('button'); if(!t) return;
+  try{
+    if(t.id === 'frSave'){
+      const v = $('#frName').value.trim().toLowerCase();
+      await rpc('set_username', { p_username: v });
+      myUsername = v; paintFriends(); toast('Username saved');
+    }else if(t.id === 'frSend'){
+      const v = $('#frAdd').value.trim(); if(!v) return;
+      await rpc('send_friend_request', { p_username: v });
+      await loadFriends(); paintFriends(); toast('Done');
+    }else if(t.id === 'frTrade'){
+      openTradeBoard();
+    }else if(t.dataset.act === 'accept' || t.dataset.act === 'decline'){
+      await rpc('respond_friend_request', { p_id: t.dataset.id, p_accept: t.dataset.act === 'accept' });
+      await loadFriends(); paintFriends();
+    }else if(t.dataset.act === 'remove'){
+      if(confirm('Remove this friend or request?')){ await rpc('remove_friend', { p_id: t.dataset.id }); await loadFriends(); paintFriends(); }
+    }else if(t.dataset.act === 'open'){
+      openFriendView(t.dataset.uid, t.dataset.name);
+    }
+  }catch(err){
+    const m = $('#frMsg'); if(m) m.textContent = err.message; else toast(err.message);
+  }
+});
+
+let viewRows = [], viewMode = 'all', viewKind = 'friend';
+async function openFriendView(uid, name){
+  viewKind = 'friend'; viewMode = 'all'; viewRows = [];
+  $('#vTitle').textContent = '@' + name; $('#vSub').textContent = 'Loading…';
+  $('#vChips').innerHTML = ''; $('#vList').innerHTML = '';
+  $('#dView').showModal();
+  try{ viewRows = (await rpc('get_friend_collection', { p_friend: uid })) || []; paintView(); }
+  catch(e){ $('#vSub').textContent = e.message; }
+}
+async function openTradeBoard(){
+  viewKind = 'trade'; viewMode = 'all'; viewRows = [];
+  $('#vTitle').textContent = 'Trade board'; $('#vSub').textContent = 'Loading…';
+  $('#vChips').innerHTML = ''; $('#vList').innerHTML = '';
+  $('#dView').showModal();
+  try{ viewRows = (await rpc('get_trade_board')) || []; paintView(); }
+  catch(e){ $('#vSub').textContent = e.message; }
+}
+function paintView(){
+  const mine = new Set(items.map(i => Number(i.id)));
+  const rows = viewRows.map(r => ({ ...r, both: mine.has(Number(r.discogs_id)) }));
+  let list = rows;
+  if(viewKind === 'friend'){
+    const both = rows.filter(r => r.both).length, trade = rows.filter(r => r.for_trade).length;
+    $('#vSub').textContent = `${num(rows.length)} record${rows.length === 1 ? '' : 's'} shown. You both own ${num(both)}.`;
+    const chip = (m, label, n) => `<button class="chip${viewMode === m ? ' on' : ''}" data-mode="${m}">${label} ${num(n)}</button>`;
+    $('#vChips').innerHTML = chip('all', 'All', rows.length) + chip('both', 'We both own', both) + chip('trade', 'Open to trade', trade);
+    if(viewMode === 'both') list = rows.filter(r => r.both);
+    if(viewMode === 'trade') list = rows.filter(r => r.for_trade);
+  }else{
+    $('#vSub').textContent = rows.length ? `${num(rows.length)} record${rows.length === 1 ? '' : 's'} your friends would trade.` : 'Nothing is marked open to trade yet.';
+    $('#vChips').innerHTML = '';
+  }
+  $('#vList').innerHTML = list.length ? list.map(viewRow).join('') : '<p class="hint">Nothing here yet.</p>';
+}
+function viewRow(r){
+  const known = r.have != null;
+  const rar = known ? rarity({ stats: { have: r.have }, edition: { size: r.edition_size } }) : { i: 5, name: 'Unknown' };
+  const basis = known ? `Held by ${num(r.have)} Discogs collectors` : 'Rarity unknown';
+  const ed = r.edition_size ? `Edition of ${num(r.edition_size)} (${r.edition_source === 'notes' ? 'from Discogs notes' : 'entered by owner'})` : '';
+  return `<div class="vrow">
+    ${r.cover ? `<img src="${esc(r.cover)}" alt="" loading="lazy" referrerpolicy="no-referrer">` : '<div class="vnoart">♪</div>'}
+    <div class="vmeta"><b>${esc(r.artist)}</b><div>${esc(r.title)}</div>
+      <div class="hint">${esc([r.release_year, r.label].filter(Boolean).join(', '))}${r.media ? `<span class="cond">${esc(r.media)}</span>` : ''}</div>
+      ${known ? pips(rar) : ''}
+      <div class="hint">${esc(basis)}${ed ? '. ' + esc(ed) : ''}</div>
+      <div class="tags">${r.both ? '<span class="tag">You own this too</span>' : ''}${r.for_trade ? '<span class="tag trade">Open to trade</span>' : ''}${r.owner_username ? `<span class="owner">@${esc(r.owner_username)}</span>` : ''}</div>
+    </div></div>`;
+}
+$('#vChips').addEventListener('click', e => {
+  const b = e.target.closest('[data-mode]'); if(!b) return;
+  viewMode = b.dataset.mode; paintView();
+});
+
+/* ---------- Account menu, backups ---------- */
 async function refreshAll(){
   const msg = $('#refreshMsg'), btn = $('#refreshAll');
   if(!items.length){ msg.textContent = 'Nothing to refresh yet.'; return; }
   btn.disabled = true;
   for(let i = 0; i < items.length; i++){
-    msg.innerHTML = `<span class="spin"></span>Refreshing ${i+1} of ${items.length}. Discogs allows about 20 records a minute.`;
-    try{ const { rel, stats } = await pull(items[i].id); items[i].stats = stats; fillFromRelease(items[i], rel); save(); render(); }
+    msg.innerHTML = `<span class="spin"></span>Refreshing ${i+1} of ${items.length}. This runs about 20 records a minute.`;
+    try{ const { rel, stats } = await pull(items[i].id); items[i].stats = stats; fillFromRelease(items[i], rel); await saveItem(items[i]); render(); }
     catch(e){ msg.textContent = e.message; btn.disabled = false; return; }
     await new Promise(r => setTimeout(r, 3200));
   }
@@ -726,16 +980,82 @@ function exportCsv(){
   const rows = items.map(it => { const e = estimate(it); return [it.artist,it.title,it.year,it.label,it.catno,it.country,it.media,it.sleeve,it.paid,e ? e.v.toFixed(2) : '',rarity(it).name,it.edition?.size,it.edition?.copy,it.stats?.have,it.stats?.want,it.stats?.forSale,it.stats?.lowest,it.id,it.notes].map(q).join(','); });
   download('crate.csv', [cols.join(','), ...rows].join('\n'), 'text/csv');
 }
+async function importItems(list){
+  let n = 0;
+  for(const raw of list){
+    if(!raw || !raw.id) continue;
+    const it = { ...raw, id: Number(raw.id), media: COND[raw.media] ? raw.media : 'VG+', sleeve: COND[raw.sleeve] ? raw.sleeve : 'VG+',
+      edition: raw.edition || {}, matrix: raw.matrix || [], notes: raw.notes || '', paid: raw.paid ?? null, added: raw.added || Date.now() };
+    try{ await insertItem(it); items.push(it); n++; }catch(e){ toast('Import stopped: ' + e.message); break; }
+  }
+  render(); toast('Imported ' + n + ' record' + (n === 1 ? '' : 's'));
+}
+function localItems(){ try{ const l = JSON.parse(localStorage.getItem(LOCAL_KEY) || '[]'); return Array.isArray(l) ? l : []; }catch{ return []; } }
+function offerLocalImport(){
+  const local = localItems();
+  $('#impLocal').hidden = !local.length;
+  const flag = 'crate.importPrompted.' + (user && user.id);
+  if(local.length && localStorage.getItem(flag) !== '1'){
+    try{ localStorage.setItem(flag, '1'); }catch{}
+    setTimeout(async () => {
+      if(confirm(`Import the ${local.length} record${local.length === 1 ? '' : 's'} saved in this browser into your account?`)) await importItems(local);
+    }, 400);
+  }
+}
 
 /* ---------- Wiring ---------- */
-$('#fab').onclick = () => token ? openAdd() : (toast('Add your Discogs token first.'), $('#tok').value = '', $('#dSettings').showModal());
-$('#btnSettings').onclick = () => { $('#tok').value = token; $('#akey').value = akey; $('#dSettings').showModal(); };
-$('#saveTok').onclick = () => { token = $('#tok').value.trim(); akey = $('#akey').value.trim(); try { localStorage.setItem(LS_TOKEN, token); localStorage.setItem(LS_AKEY, akey); } catch {} toast('Keys saved'); $('#dSettings').close(); };
+$('#aSwitch').onclick = () => setAuthMode(authMode === 'signup' ? 'signin' : 'signup');
+$('#gBtn').onclick = async () => {
+  const { error } = await sb.auth.signInWithOAuth({ provider: 'google', options: { redirectTo: location.origin + location.pathname } });
+  if(error) $('#aMsg').textContent = friendlyAuthError(error);
+};
+$('#aForgot').onclick = async () => {
+  const email = $('#aEmail').value.trim(), msg = $('#aMsg');
+  if(!/^\S+@\S+\.\S+$/.test(email)){ msg.textContent = 'Type your email above, then tap this again.'; return; }
+  const { error } = await sb.auth.resetPasswordForEmail(email, { redirectTo: location.origin + location.pathname });
+  msg.textContent = error ? friendlyAuthError(error) : 'Check your email for a reset link.';
+};
+$('#authForm').addEventListener('submit', async e => {
+  e.preventDefault();
+  if(!sb) return;
+  const btn = $('#aSubmit'), msg = $('#aMsg');
+  const email = $('#aEmail').value.trim(), pw = $('#aPass').value;
+  msg.textContent = '';
+  if(authMode !== 'reset' && !/^\S+@\S+\.\S+$/.test(email)){ msg.textContent = 'Enter a valid email address.'; return; }
+  if(pw.length < 8){ msg.textContent = 'Use at least 8 characters for your password.'; return; }
+  btn.disabled = true;
+  try{
+    if(authMode === 'signin'){
+      const { error } = await sb.auth.signInWithPassword({ email, password: pw });
+      if(error) throw error;
+    }else if(authMode === 'signup'){
+      const { data, error } = await sb.auth.signUp({ email, password: pw, options: { emailRedirectTo: location.origin + location.pathname } });
+      if(error) throw error;
+      if(!data.session){ setAuthMode('signin'); $('#aMsg').textContent = 'Check your email for a confirmation link, then sign in.'; }
+    }else{
+      const { error } = await sb.auth.updateUser({ password: pw });
+      if(error) throw error;
+      toast('Password updated'); authMode = 'signin';
+      const { data } = await sb.auth.getSession();
+      if(data.session) await enterApp(data.session.user);
+    }
+  }catch(err){ msg.textContent = friendlyAuthError(err); }
+  btn.disabled = false;
+});
+
+$('#fab').onclick = openAdd;
+$('#btnFriends').onclick = openFriends;
+$('#btnSettings').onclick = () => { $('#acctEmail').textContent = (user && user.email) || ''; paintQuota(); $('#dSettings').showModal(); };
+$('#signOut').onclick = async () => { $('#dSettings').close(); await sb.auth.signOut(); };
 $('#go').onclick = search;
-$('#scan').onclick = () => akey ? $('#cam').click() : (toast('Add your Anthropic API key in Settings first.'), $('#dAdd').close(), $('#btnSettings').click());
-$('#pick').onclick = () => akey ? $('#lib').click() : (toast('Add your Anthropic API key in Settings first.'), $('#dAdd').close(), $('#btnSettings').click());
-$('#runScan').onclick = () => akey ? $('#runCam').click() : toast('Add your Anthropic API key in Settings first.');
-$('#runPick').onclick = () => akey ? $('#runLib').click() : toast('Add your Anthropic API key in Settings first.');
+$('#q').addEventListener('keydown', e => { if(e.key === 'Enter') search(); });
+$('#doAdd').onclick = addPicked;
+$('#scan').onclick = () => $('#cam').click();
+$('#pick').onclick = () => $('#lib').click();
+['#cam','#lib'].forEach(id => $(id).addEventListener('change', e => { const f = e.target.files[0]; e.target.value = ''; onPhoto(f); }));
+$('#runScan').onclick = () => $('#runCam').click();
+$('#runPick').onclick = () => $('#runLib').click();
+['#runCam','#runLib'].forEach(id => $(id).addEventListener('change', e => { const f = e.target.files[0]; e.target.value = ''; onRunout(f); }));
 $('#mGo').onclick = async () => {
   const read = $('#mText').value.split(/\n|;| \/ /).map(x => x.trim()).filter(x => norm(x).length >= 4);
   if(!read.length){ $('#scanMsg').textContent = 'Type at least one etched string with four or more letters or numbers.'; return; }
@@ -743,10 +1063,6 @@ $('#mGo').onclick = async () => {
   try{ await compareMatrix(read); }catch(e){ $('#scanMsg').textContent = e.message; }
   btn.disabled = false;
 };
-['#runCam','#runLib'].forEach(id => $(id).addEventListener('change', e => { const f = e.target.files[0]; e.target.value = ''; onRunout(f); }));
-['#cam','#lib'].forEach(id => $(id).addEventListener('change', e => { const f = e.target.files[0]; e.target.value = ''; onPhoto(f); }));
-$('#q').addEventListener('keydown', e => { if(e.key === 'Enter') search(); });
-$('#doAdd').onclick = addPicked;
 $('#filter').addEventListener('input', render);
 $('#sort').addEventListener('change', render);
 $('#grid').addEventListener('click', e => { const b = e.target.closest('.rec'); if(b) openDetail(b.dataset.uid); });
@@ -754,22 +1070,36 @@ $('#refreshAll').onclick = refreshAll;
 $('#expJson').onclick = () => download('crate-backup.json', JSON.stringify(items, null, 2), 'application/json');
 $('#expCsv').onclick = exportCsv;
 $('#impJson').onclick = () => $('#file').click();
+$('#impLocal').onclick = async () => { await importItems(localItems()); $('#dSettings').close(); };
 $('#file').addEventListener('change', async e => {
-  const f = e.target.files[0]; if(!f) return;
+  const f = e.target.files[0]; e.target.value = ''; if(!f) return;
   try{
     const data = JSON.parse(await f.text());
     if(!Array.isArray(data)) throw new Error();
-    const have = new Set(items.map(i => i.uid));
-    data.filter(i => i && i.uid && !have.has(i.uid)).forEach(i => items.push(i));
-    save(); render(); toast('Backup imported');
+    await importItems(data);
   }catch{ toast('That file isn’t a Crate backup.'); }
-  e.target.value = '';
 });
 document.addEventListener('click', e => {
   if(e.target.closest('[data-close]')) e.target.closest('dialog').close();
   else if(e.target.tagName === 'DIALOG') e.target.close();
 });
-render();
+
+/* ---------- Start ---------- */
+if(!sb){ showAuth('signin'); }
+else{
+  sb.auth.onAuthStateChange((event, session) => {
+    /* Don't await Supabase calls inside this callback; defer them. */
+    setTimeout(() => {
+      if(event === 'PASSWORD_RECOVERY'){ showAuth('reset'); return; }
+      if(session && session.user){
+        if(authMode !== 'reset' && enteredFor !== session.user.id) enterApp(session.user);
+      }else{
+        enteredFor = null; user = null; items = []; friends = []; myUsername = null;
+        showAuth('signin');
+      }
+    }, 0);
+  });
+}
 </script>
 </body>
 </html>

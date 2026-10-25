@@ -192,6 +192,18 @@ dialog::backdrop{background:rgba(8,12,45,.7)}
 .stwant{display:flex;gap:10px;align-items:center;padding:10px 0;border-top:2px solid var(--line)}
 .hbtns .gear{width:40px;height:40px;font-size:17px}
 .hbtns{gap:8px}
+.tools{flex-wrap:wrap}
+.tools input{flex:1 1 100%}
+.tools select{flex:1 1 0;max-width:none;min-width:0}
+@media(min-width:640px){.tools input{flex:1 1 0}.tools select{flex:0 1 auto}}
+.totals .scorebtn{background:none;border:0;padding:0;color:inherit;font:inherit;font-size:28px;font-weight:800;line-height:1.1;text-align:left;cursor:pointer}
+.totals .scorebtn .of{font-size:16px;font-weight:600;opacity:.8}
+.totals .scorebtn small{display:block;font-size:13px;font-weight:400;opacity:.8;margin-top:2px;text-decoration:underline;text-underline-offset:3px}
+.scorebig{font-size:64px;font-weight:800;letter-spacing:-.03em;line-height:1;margin:14px 0 10px}
+.scorebig span{font-size:24px;font-weight:600;color:var(--muted);letter-spacing:0}
+.meter{display:grid;grid-template-columns:repeat(10,1fr);gap:4px;margin-bottom:6px}
+.meter i{height:12px;border-radius:2px;display:block}
+.tierrow{display:flex;justify-content:space-between;padding:6px 0;border-top:2px solid var(--line);font-size:15px}
 </style>
 </head>
 <body>
@@ -235,10 +247,12 @@ dialog::backdrop{background:rgba(8,12,45,.7)}
   <section class="totals" id="totals"></section>
   <div class="tools" id="tools">
     <input id="filter" type="search" placeholder="Search your crate" aria-label="Search your crate">
+    <select id="genre" aria-label="Filter by genre or style"><option value="">All genres</option></select>
     <select id="sort" aria-label="Sort">
       <option value="added">Recently added</option>
       <option value="value">Highest value</option>
       <option value="rare">Rarest first</option>
+      <option value="genre">Genre A–Z</option>
       <option value="artist">Artist A–Z</option>
     </select>
   </div>
@@ -262,6 +276,14 @@ dialog::backdrop{background:rgba(8,12,45,.7)}
   <p class="hint" id="scanMsg">Fill the frame with the center label, in good light, with the text sharp.</p>
   <p class="hint" id="quota"></p>
   <div id="runRow" hidden>
+    <p class="hint" style="margin-top:12px"><b>Not sure which pressing?</b> Photograph your record’s label and Crate compares it with the Discogs photos of the top results. A white label is matched by details like stamps, handwriting and etching, so treat it as a hint. This uses 2 scans.</p>
+    <div class="scanrow" style="margin-top:8px">
+      <button class="btn scan" id="cmpScan">Compare with my photo</button>
+      <button class="btn alt" id="cmpPick">Use a photo</button>
+    </div>
+    <input type="file" id="cmpCam" accept="image/*" capture="environment" hidden>
+    <input type="file" id="cmpLib" accept="image/*" hidden>
+    <hr style="border:0;border-top:2px solid var(--line);margin:16px 0 0">
     <p class="hint" style="margin-top:12px">To pin down the exact pressing, photograph the etched text in the smooth ring near the center (the runout groove). Tilt the record so the light rakes across the letters.</p>
     <div class="scanrow" style="margin-top:8px">
       <button class="btn scan" id="runScan">Photograph the runout</button>
@@ -364,6 +386,9 @@ dialog::backdrop{background:rgba(8,12,45,.7)}
 <dialog id="dCrate"><div class="sheet" id="crBody"></div></dialog>
 <dialog id="dPick"><div class="sheet" id="pkBody"></div></dialog>
 
+<!-- Collection rarity score -->
+<dialog id="dScore"><div class="sheet" id="scBody"></div></dialog>
+
 <!-- Rarity card -->
 <dialog id="dCard"><div class="sheet">
   <div class="row"><h2>Rarity card</h2><button class="close" data-close aria-label="Close">×</button></div>
@@ -385,7 +410,7 @@ const configured = !/YOUR-/.test(SUPABASE_URL + SUPABASE_ANON_KEY) && !!window.s
 const sb = configured ? window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY) : null;
 
 let friends = [], myUsername = null;
-let items = [], user = null, plan = 'free', scansUsed = 0, picked = null, lastMatrix = null;
+let items = [], user = null, plan = 'free', scansUsed = 0, picked = null, lastMatrix = null, cmpDone = new Set();
 const LOCAL_KEY = 'crate.items.v1';
 
 const COND = {
@@ -504,7 +529,7 @@ function fromRow(r){
     matrix: r.matrix || [],
     hidden: !!r.hidden, forTrade: !!r.for_trade,
     artist: s.artist, title: s.title, year: s.year, label: s.label, catno: s.catno, country: s.country,
-    format: s.format, cover: s.cover, coverLg: s.coverLg, stats: s.stats
+    format: s.format, cover: s.cover, coverLg: s.coverLg, genres: s.genres, styles: s.styles, stats: s.stats
   };
 }
 function toRow(it){
@@ -514,7 +539,7 @@ function toRow(it){
     edition_size: e.size || null, edition_copy: e.copy || null, edition_source: e.source || null, edition_manual: !!e.manual,
     matrix: it.matrix || [], hidden: !!it.hidden, for_trade: !!it.forTrade,
     snapshot: { artist: it.artist, title: it.title, year: it.year, label: it.label, catno: it.catno, country: it.country,
-      format: it.format, cover: it.cover, coverLg: it.coverLg, stats: it.stats }
+      format: it.format, cover: it.cover, coverLg: it.coverLg, genres: it.genres, styles: it.styles, stats: it.stats }
   };
 }
 async function loadAll(){
@@ -563,6 +588,8 @@ function fillFromRelease(it, rel){
   it.format = (rel.formats || []).map(f => [f.name, ...(f.descriptions || []), f.text].filter(Boolean).join(', ')).join(' · ');
   it.cover = rel.images?.[0]?.uri150 || rel.thumb || it.cover;
   it.coverLg = rel.images?.[0]?.uri || it.coverLg;
+  if(Array.isArray(rel.genres)) it.genres = rel.genres;
+  if(Array.isArray(rel.styles)) it.styles = rel.styles;
   const auto = detectEdition(rel);
   it.edition = it.edition || {};
   if(auto && !it.edition.manual){ it.edition.size = auto; it.edition.source = 'notes'; }
@@ -597,6 +624,21 @@ function stampText(it){
 }
 
 /* ---------- Render ---------- */
+let genreSig = '';
+function paintGenreOptions(){
+  const g = {}, st = {};
+  items.forEach(i => { (i.genres || []).forEach(t => { g[t] = (g[t] || 0) + 1; }); (i.styles || []).forEach(t => { st[t] = (st[t] || 0) + 1; }); });
+  const sel = $('#genre'), cur = sel.value;
+  const sig = JSON.stringify([g, st]);
+  if(sig === genreSig) return;
+  genreSig = sig;
+  const opts = o => Object.keys(o).sort().map(t => ({ t, n: o[t] }));
+  const html = ['<option value="">All genres</option>'];
+  if(Object.keys(g).length) html.push('<optgroup label="Genres">' + opts(g).map(o => `<option value="g:${esc(o.t)}">${esc(o.t)} (${o.n})</option>`).join('') + '</optgroup>');
+  if(Object.keys(st).length) html.push('<optgroup label="Styles">' + opts(st).map(o => `<option value="s:${esc(o.t)}">${esc(o.t)} (${o.n})</option>`).join('') + '</optgroup>');
+  sel.innerHTML = html.join('');
+  sel.value = [...sel.options].some(o => o.value === cur) ? cur : '';
+}
 function art(it){
   if(!it.cover) return '';
   const fb = esc(it.cover);
@@ -605,20 +647,29 @@ function art(it){
 function render(){
   const q = $('#filter').value.trim().toLowerCase();
   const sort = $('#sort').value;
-  let list = items.filter(it => !q || [it.artist, it.title, it.label, it.catno, it.year, it.notes].join(' ').toLowerCase().includes(q));
+  paintGenreOptions();
+  const gsel = $('#genre').value;
+  const hasTag = it => !gsel || (gsel.startsWith('g:') ? (it.genres || []) : (it.styles || [])).includes(gsel.slice(2));
+  let list = items.filter(it => hasTag(it) && (!q || [it.artist, it.title, it.label, it.catno, it.year, it.notes, ...(it.genres || []), ...(it.styles || [])].join(' ').toLowerCase().includes(q)));
   const val = it => estimate(it)?.v ?? -1;
   if(sort === 'value') list.sort((a,b) => val(b) - val(a));
   else if(sort === 'rare') list.sort((a,b) => rarity(a).i - rarity(b).i || val(b) - val(a));
+  else if(sort === 'genre'){
+    const key = it => [(it.genres || [])[0] || 'zzz', (it.styles || [])[0] || 'zzz'];
+    list.sort((a, b) => { const x = key(a), y = key(b); return x[0].localeCompare(y[0]) || x[1].localeCompare(y[1]) || (a.artist || '').localeCompare(b.artist || ''); });
+  }
   else if(sort === 'artist') list.sort((a,b) => (a.artist||'').localeCompare(b.artist||''));
   else list.sort((a,b) => b.added - a.added);
 
   const total = items.reduce((s,it) => s + (estimate(it)?.v || 0), 0);
   const paid = items.reduce((s,it) => s + (+it.paid || 0), 0);
   const rare = items.filter(it => rarity(it).i <= 1).length;
+  const sc = ownScore();
   $('#totals').innerHTML = items.length ? `
     <div><div class="big">${money(total)}</div><div class="sub">estimated value of ${num(items.length)} record${items.length===1?'':'s'}</div></div>
     ${paid ? `<div class="stat">${money(paid)}<small>paid</small></div>` : ''}
-    <div class="stat">${num(rare)}<small>rare or ultra rare</small></div>` : '';
+    <div class="stat">${num(rare)}<small>rare or ultra rare</small></div>
+    ${sc ? `<button class="scorebtn" id="scoreBtn" aria-label="Rarity score, tap for details">${sc.score.toFixed(1)}<span class="of">/10</span><small>rarity score${sc.provisional ? ' (provisional)' : ''}</small></button>` : ''}` : '';
   $('#tools').style.display = items.length ? '' : 'none';
 
   $('#grid').innerHTML = list.map(it => {
@@ -691,17 +742,18 @@ function renderResults(res, autopick){
   if(!res.length){ box.innerHTML = '<li class="hint">No vinyl releases found. Try fewer words, or the catalog number.</li>'; box._res = []; $('#runRow').hidden = true; return; }
   box.innerHTML = res.map((r,i) => `<li><button data-i="${i}" aria-pressed="false">
       <img src="${esc(r.thumb || '')}" alt="" referrerpolicy="no-referrer">
-      <span><b>${esc(cleanName(r.title))}</b><small>${esc([r.year, r.country, (r.label||[])[0], r.catno].filter(Boolean).join(', '))}<br>${esc((r.format||[]).join(', '))}</small>${r._m >= 3 ? `<small style="color:var(--blue);font-weight:700;margin-top:3px">Runout matches: ${esc(r._mx)}</small>` : r._m > 0 ? '<small style="margin-top:3px">Partial runout match</small>' : ''}</span>
+      <span><b>${esc(cleanName(r.title))}</b><small>${esc([r.year, r.country, (r.label||[])[0], r.catno].filter(Boolean).join(', '))}<br>${esc((r.format||[]).join(', '))}</small>${r._v != null ? `<small style="color:var(--blue);font-weight:700;margin-top:3px">${r._v >= 70 ? 'Looks like a match' : r._v >= 40 ? 'Possible match' : 'Weak match'} (${r._v}%)</small><small>${esc(r._vr || '')}</small>` : ''}${r._m >= 3 ? `<small style="color:var(--blue);font-weight:700;margin-top:3px">Runout matches: ${esc(r._mx)}</small>` : r._m > 0 ? '<small style="margin-top:3px">Partial runout match</small>' : ''}</span>
     </button></li>`).join('');
   box._res = res;
   $('#runRow').hidden = false;
+  if(typeof paintCmpButton === 'function') paintCmpButton();
   if(autopick) box.querySelector('button[data-i="0"]').click();
 }
 async function search(){
   const q = $('#q').value.trim(); if(!q) return;
   const box = $('#results');
   box.innerHTML = '<li class="hint"><span class="spin"></span>Searching Discogs…</li>';
-  $('#addbar').hidden = true; picked = null; lastMatrix = null;
+  $('#addbar').hidden = true; picked = null; lastMatrix = null; cmpDone = new Set();
   try{
     const params = /^\d{8,14}$/.test(q.replace(/\s/g,'')) ? { barcode: q.replace(/\s/g,'') } : { q };
     const d = await fn('discogs', { action: 'search', params });
@@ -758,7 +810,7 @@ async function scanSearch(info){
 async function onPhoto(file){
   if(!file) return;
   const msg = $('#scanMsg');
-  $('#addbar').hidden = true; picked = null; lastMatrix = null; $('#runRow').hidden = true; $('#results').innerHTML = '';
+  $('#addbar').hidden = true; picked = null; lastMatrix = null; cmpDone = new Set(); $('#runRow').hidden = true; $('#results').innerHTML = '';
   msg.innerHTML = '<span class="spin"></span>Reading the label…';
   try{
     const info = await scanPhoto('label', await photoToJpeg(file));
@@ -771,6 +823,43 @@ async function onPhoto(file){
     msg.textContent = res.length
       ? 'Read: ' + read + '. Best match is selected. Check the year, country and catalog number, then add it.'
       : 'Read: ' + read + '. No match on Discogs. Edit the search below and try again.';
+  }catch(e){ msg.textContent = e.message; }
+}
+
+/* ---------- Compare my photo with Discogs photos ---------- */
+function paintCmpButton(){
+  const all = $('#results')._res || [];
+  const left = all.filter(c => !cmpDone.has(c.id)).length;
+  $('#cmpScan').textContent = cmpDone.size && left ? 'Compare the next ' + Math.min(5, left) : 'Compare with my photo';
+}
+async function onCompare(file){
+  if(!file) return;
+  const msg = $('#scanMsg');
+  const all = $('#results')._res || [];
+  const cands = all.filter(c => !cmpDone.has(c.id)).slice(0, 5);
+  if(!cands.length){ msg.textContent = 'No more results to compare. Try a different search.'; return; }
+  msg.innerHTML = `<span class="spin"></span>Comparing your photo with ${cands.length} pressing${cands.length === 1 ? '' : 's'}. This takes about 20 seconds…`;
+  try{
+    const d = await fn('scan', { kind: 'compare', image: await photoToJpeg(file, 1600), ids: cands.map(c => c.id) });
+    scansUsed += 2; paintQuota();
+    const res = d.result || {}, rank = res.ranking || [];
+    cands.forEach(c => { cmpDone.add(c.id); });
+    cands.forEach(c => {
+      const x = rank.find(y => Number(y.id) === Number(c.id));
+      c._v = x ? x.score : null; c._vr = x ? x.reason : '';
+    });
+    const scored = cands.filter(c => c._v != null).sort((a, b) => b._v - a._v);
+    const sorted = [...scored, ...all.filter(c => !scored.includes(c))];
+    const top = scored[0], second = scored[1];
+    const clear = !!top && top._v >= 70 && (!second || top._v - second._v >= 15);
+    picked = null; $('#addbar').hidden = true;
+    renderResults(sorted, clear);
+    paintCmpButton();
+    const skipped = (res.skipped || []).length;
+    msg.textContent = (clear ? 'Best match is selected. ' : top ? 'No clear match. The closest is at the top. ' : 'Could not compare these. ')
+      + (res.overall ? res.overall + ' ' : '')
+      + (skipped ? `${skipped} had no photos on Discogs. ` : '')
+      + 'This is a visual hint, so check the catalog number and etching before adding.';
   }catch(e){ msg.textContent = e.message; }
 }
 
@@ -840,7 +929,7 @@ function openDetail(uid){
     <div class="dhead">
       ${art(it)}
       <div><div class="a">${esc(it.artist)}</div><div class="t">${esc(it.title)}</div>
-      <div class="s">${esc([it.year, it.country, it.label, it.catno].filter(Boolean).join(', '))}<br>${esc(it.format || '')}</div></div>
+      <div class="s">${esc([it.year, it.country, it.label, it.catno].filter(Boolean).join(', '))}<br>${esc(it.format || '')}${(it.genres || it.styles) ? `<br>${esc([...(it.genres || []), ...(it.styles || [])].join(', '))}` : ''}</div></div>
     </div>
     <div class="facts">
       <div class="fact hl"><b>${e ? money(e.v) : 'No price'}</b><small>${esc(e ? e.basis : 'Nothing listed on Discogs right now')}</small></div>
@@ -1007,7 +1096,9 @@ function paintView(){
   let list = rows;
   if(viewKind === 'friend'){
     const both = rows.filter(r => r.both).length, trade = rows.filter(r => r.for_trade).length;
-    $('#vSub').textContent = `${num(rows.length)} record${rows.length === 1 ? '' : 's'} shown. You both own ${num(both)}.`;
+    const fs = rarityScore(rows.map(r => ({ have: r.have, size: r.edition_size }))), ms = ownScore();
+    $('#vSub').textContent = `${num(rows.length)} record${rows.length === 1 ? '' : 's'} shown. You both own ${num(both)}.`
+      + (fs ? ` Their rarity score is ${fs.score.toFixed(1)} out of 10${fs.provisional ? ' (provisional)' : ''}${ms ? `, yours is ${ms.score.toFixed(1)}` : ''}. Hidden records aren’t counted.` : '');
     const chip = (m, label, n) => `<button class="chip${viewMode === m ? ' on' : ''}" data-mode="${m}">${label} ${num(n)}</button>`;
     $('#vChips').innerHTML = chip('all', 'All', rows.length) + chip('both', 'We both own', both) + chip('trade', 'Open to trade', trade);
     if(viewMode === 'both') list = rows.filter(r => r.both);
@@ -1134,6 +1225,9 @@ $('#doAdd').onclick = addPicked;
 $('#scan').onclick = () => $('#cam').click();
 $('#pick').onclick = () => $('#lib').click();
 ['#cam','#lib'].forEach(id => $(id).addEventListener('change', e => { const f = e.target.files[0]; e.target.value = ''; onPhoto(f); }));
+$('#cmpScan').onclick = () => $('#cmpCam').click();
+$('#cmpPick').onclick = () => $('#cmpLib').click();
+['#cmpCam', '#cmpLib'].forEach(id => $(id).addEventListener('change', e => { const f = e.target.files[0]; e.target.value = ''; onCompare(f); }));
 $('#runScan').onclick = () => $('#runCam').click();
 $('#runPick').onclick = () => $('#runLib').click();
 ['#runCam','#runLib'].forEach(id => $(id).addEventListener('change', e => { const f = e.target.files[0]; e.target.value = ''; onRunout(f); }));
@@ -1146,6 +1240,7 @@ $('#mGo').onclick = async () => {
 };
 $('#filter').addEventListener('input', render);
 $('#sort').addEventListener('change', render);
+$('#genre').addEventListener('change', render);
 $('#grid').addEventListener('click', e => { const b = e.target.closest('.rec'); if(b) openDetail(b.dataset.uid); });
 $('#refreshAll').onclick = refreshAll;
 $('#expJson').onclick = () => download('crate-backup.json', JSON.stringify(items, null, 2), 'application/json');
@@ -1175,6 +1270,7 @@ const spinner = t => `<p class="hint"><span class="spin"></span>${esc(t)}</p>`;
 
 /* ---------- Background bar (imports, price loading) ---------- */
 const bg = { running: false, stop: false };
+const needsInfo = i => !i.stats || i.genres === undefined;
 function paintBg(text, stoppable){
   const b = $('#bgbar'); b.hidden = false;
   b.innerHTML = `<span>${esc(text)}</span>${stoppable ? '<button class="btn" id="bgStop">Stop</button>' : ''}`;
@@ -1182,10 +1278,10 @@ function paintBg(text, stoppable){
 function checkMissing(){
   const b = $('#bgbar');
   if(bg.running) return;
-  const n = items.filter(i => !i.stats).length;
+  const n = items.filter(needsInfo).length;
   if(!n){ b.hidden = true; return; }
   b.hidden = false;
-  b.innerHTML = `<span>${n} record${n === 1 ? '' : 's'} still need prices and rarity.</span><button class="btn" id="bgGo">Load them</button>`;
+  b.innerHTML = `<span>${n} record${n === 1 ? '' : 's'} need prices, rarity or genre info.</span><button class="btn" id="bgGo">Load them</button>`;
 }
 $('#bgbar').addEventListener('click', e => {
   if(e.target.id === 'bgGo') fillMissing();
@@ -1202,8 +1298,8 @@ async function pullRetry(id){
 }
 async function fillMissing(){
   if(bg.running) return;
-  const todo = items.filter(i => !i.stats);
-  if(!todo.length){ toast('Everything already has prices.'); return; }
+  const todo = items.filter(needsInfo);
+  if(!todo.length){ toast('Everything is up to date.'); return; }
   bg.running = true; bg.stop = false;
   let done = 0, failed = 0;
   for(const it of todo){
@@ -1244,7 +1340,7 @@ async function loadRecordHistory(it){
   const box = $('#eHist'); if(!box) return;
   const { data, error } = await sb.from('price_history').select('taken_on,value').eq('record_id', it.uid).order('taken_on');
   if(error || !box.isConnected) return;
-  if(!data || data.length < 2){ box.innerHTML = '<p class="hint">Value history starts building each time prices refresh.</p>'; return; }
+  if(!Array.isArray(data) || data.length < 2){ box.innerHTML = '<p class="hint">Value history starts building each time prices refresh.</p>'; return; }
   const a = data[0], z = data[data.length - 1];
   box.innerHTML = `<label>Estimated value over time</label>${spark(data.map(d => +d.value))}<p class="hint">${esc(fmtDay(a.taken_on))} ${money(+a.value)} to ${esc(fmtDay(z.taken_on))} ${money(+z.value)}. These are Discogs estimates, not sales.</p>`;
 }
@@ -1254,7 +1350,7 @@ async function paintHistory(){
   box.innerHTML = spinner('Loading…');
   const { data, error } = await sb.from('value_snapshots').select('taken_on,total').order('taken_on');
   if(error){ box.innerHTML = `<p class="hint">${esc(error.message)}</p>`; return; }
-  if(!data || data.length < 2){ box.innerHTML = '<p class="hint">History builds each time prices refresh. Check back after a few refreshes.</p>'; return; }
+  if(!Array.isArray(data) || data.length < 2){ box.innerHTML = '<p class="hint">History builds each time prices refresh. Check back after a few refreshes.</p>'; return; }
   const a = data[0], z = data[data.length - 1];
   box.innerHTML = `${spark(data.map(d => +d.total))}<p class="hint">${esc(fmtDay(a.taken_on))} ${money(+a.total)} to ${esc(fmtDay(z.taken_on))} ${money(+z.total)}. Discogs estimates, not sales. Only you can see this.</p>`;
 }
@@ -1477,7 +1573,7 @@ async function loadCrates(){
     sb.from('crate_items').select('*')
   ]);
   if(c.error) throw new Error(c.error.message);
-  crates = c.data || []; crateItems = ci.data || [];
+  crates = Array.isArray(c.data) ? c.data : []; crateItems = Array.isArray(ci.data) ? ci.data : [];
 }
 const recById = uid => items.find(i => i.uid === uid);
 function crateRows(cid){ return crateItems.filter(x => x.crate_id === cid && recById(x.record_id)).sort((a, b) => a.position - b.position); }
@@ -1616,6 +1712,54 @@ $('#pkBody').addEventListener('click', async e => {
   try{ const n = await addToCrate(curCrate, [...pickSel]); $('#dPick').close(); paintCrate(); toast(n ? `Added ${n} record${n === 1 ? '' : 's'}` : 'Nothing selected'); }
   catch(err){ toast(err.message); }
 });
+
+/* ---------- Collection rarity score (1 to 10) ---------- */
+/* Rarity here means how few Discogs collectors own a pressing. It is not price. */
+const effHave = r => Math.max(1, r.size ? Math.min(r.have, r.size) : r.have);
+const tierOf = h => h < 75 ? 0 : h < 400 ? 1 : h < 2000 ? 2 : h < 10000 ? 3 : 4;
+function rarityScore(rows){
+  const rated = rows.filter(r => r.have != null);
+  const n = rated.length;
+  if(!n) return null;
+  const pts = r => Math.max(0, Math.min(1, 1 - Math.log10(effHave(r)) / Math.log10(20000)));
+  const avg = rated.reduce((a, r) => a + pts(r), 0) / n;
+  const share = rated.filter(r => effHave(r) < 400).length / n;
+  const tiers = [0, 0, 0, 0, 0]; rated.forEach(r => { tiers[tierOf(effHave(r))]++; });
+  const raw = 0.6 * avg + 0.4 * share;
+  const adj = (n * raw + 10 * 0.13) / (n + 10); /* small collections are pulled toward the middle */
+  const score = Math.round((1 + 9 * Math.min(1, adj / 0.55)) * 10) / 10;
+  return { score, n, total: rows.length, avg, share, tiers, provisional: n < 20 };
+}
+const ownRows = () => items.map(i => ({ have: i.stats && i.stats.have != null ? i.stats.have : null, size: i.edition && i.edition.size, it: i }));
+const ownScore = () => rarityScore(ownRows());
+function openScore(){
+  const rows = ownRows(), sc = rarityScore(rows), d = $('#scBody');
+  const close = '<div class="row"><h2>Rarity score</h2><button class="close" data-close aria-label="Close">×</button></div>';
+  if(!sc){
+    d.innerHTML = close + '<p class="hint">Crate needs Discogs owner counts to score your collection. Load prices and rarity for your records first.</p>';
+    $('#dScore').showModal(); return;
+  }
+  const names = ['Ultra rare', 'Rare', 'Uncommon', 'Common', 'Everywhere'];
+  const segs = Array.from({ length: 10 }, (_, k) => { const f = Math.round(Math.max(0, Math.min(1, sc.score - k)) * 100); return `<i style="background:linear-gradient(90deg,var(--blue) ${f}%,var(--line) ${f}%)"></i>`; }).join('');
+  const rarest = rows.filter(r => r.have != null).sort((a, b) => effHave(a) - effHave(b)).slice(0, 5);
+  d.innerHTML = close + `
+    <div class="scorebig">${sc.score.toFixed(1)}<span> / 10</span></div>
+    <div class="meter">${segs}</div>
+    <p class="hint">Based on ${num(sc.n)} of ${num(sc.total)} records that have Discogs owner counts.${sc.provisional ? ' Provisional: with fewer than 20 rated records the score is held near the middle until you add more.' : ''}</p>
+    <div class="facts">
+      <div class="fact"><b>${Math.round(sc.avg * 100)} / 100</b><small>How rare your typical record is</small></div>
+      <div class="fact"><b>${Math.round(sc.share * 100)}%</b><small>of your records are held by fewer than 400 Discogs collectors</small></div>
+    </div>
+    <h3 class="frh">Your records by rarity</h3>
+    ${sc.tiers.map((c, i) => `<div class="tierrow"><span>${names[i]}</span><b>${num(c)}</b></div>`).join('')}
+    ${sc.total > sc.n ? `<div class="tierrow"><span>No Discogs data yet</span><b>${num(sc.total - sc.n)}</b></div>` : ''}
+    <h3 class="frh">Your rarest records</h3>
+    ${rarest.map(r => `<div class="tierrow"><span><b>${esc(r.it.artist)}</b> ${esc(r.it.title)}</span><span style="text-align:right;white-space:nowrap">${num(r.have)} owners</span></div>`).join('')}
+    <h3 class="frh">How it works</h3>
+    <p class="hint">Each record earns points for how few Discogs collectors own that pressing, and the score blends how rare your typical record is (60%) with how many of your records are held by fewer than 400 collectors (40%). A sourced edition size caps the owner count. Rare here means few Discogs owners. It does not mean valuable. Records without Discogs data are left out, and small collections are pulled toward the middle so a few lucky finds can’t max it out. Friends see only this score, never your prices.</p>`;
+  $('#dScore').showModal();
+}
+$('#totals').addEventListener('click', e => { if(e.target.closest('#scoreBtn')) openScore(); });
 
 /* ---------- Rarity card (never shows a price) ---------- */
 let cardItem = null;

@@ -171,6 +171,27 @@ dialog::backdrop{background:rgba(8,12,45,.7)}
 .sheet .pips i{background:var(--line)}
 .sheet .pips i.on{background:var(--blue)}
 .sheet .cond{border-color:var(--muted);color:var(--muted)}
+
+.bgbar{background:var(--sticker);color:var(--ink);border-radius:8px;padding:10px 12px;margin:6px 0 12px;display:flex;align-items:center;justify-content:space-between;gap:10px;font-weight:600;font-size:14px}
+.bgbar .btn{padding:7px 14px;font-size:14px;flex:none}
+.sheet .cratecard{display:flex;justify-content:space-between;align-items:center;gap:10px;width:100%;padding:12px 0;border:0;border-top:2px solid var(--line);background:none;text-align:left;color:var(--ink);font-size:16px}
+.crrow{display:grid;grid-template-columns:56px 1fr;gap:12px;padding:12px 0;border-top:2px solid var(--line)}
+.crrow img,.crrow .vnoart{width:56px;height:56px}
+.crctl{display:flex;gap:10px 14px;flex-wrap:wrap;align-items:center;margin-top:8px}
+.sheet .crctl label{display:flex;gap:6px;align-items:center;margin:0;font-size:14px;font-weight:600}
+.sheet .crctl input{width:auto;accent-color:var(--blue);transform:scale(1.2)}
+.mini{background:none;border:2px solid var(--line);border-radius:6px;padding:3px 9px;font-weight:700;color:var(--ink)}
+.warn{color:var(--stamp);font-weight:700;font-size:13.5px;margin-top:2px}
+.sheet .pickrow{display:flex;gap:12px;align-items:center;margin:0;padding:10px 0;border-top:2px solid var(--line);font-weight:400;font-size:15px}
+.sheet .pickrow input{width:auto;accent-color:var(--blue);transform:scale(1.3)}
+.verdict{border-radius:8px;padding:10px 12px;font-weight:700;margin-top:12px;background:var(--line);color:var(--ink);font-size:15px;line-height:1.35}
+.verdict.good{background:#cdeccb}
+.verdict.fair{background:#fff3b8}
+.verdict.high{background:#f6c9c3}
+.spark{width:100%;height:72px;display:block;margin-top:6px}
+.stwant{display:flex;gap:10px;align-items:center;padding:10px 0;border-top:2px solid var(--line)}
+.hbtns .gear{width:40px;height:40px;font-size:17px}
+.hbtns{gap:8px}
 </style>
 </head>
 <body>
@@ -208,8 +229,9 @@ dialog::backdrop{background:rgba(8,12,45,.7)}
 <div class="wrap">
   <header>
     <div class="brand">Crate</div>
-    <div class="hbtns"><button class="gear" id="btnFriends" aria-label="Friends">👥<span class="badge" id="frBadge" hidden></span></button><button class="gear" id="btnSettings" aria-label="Account and settings">⚙</button></div>
+    <div class="hbtns"><button class="gear" id="btnStore" aria-label="Record store mode">🏪</button><button class="gear" id="btnCrates" aria-label="Gig crates">📦</button><button class="gear" id="btnFriends" aria-label="Friends">👥<span class="badge" id="frBadge" hidden></span></button><button class="gear" id="btnSettings" aria-label="Account and settings">⚙</button></div>
   </header>
+  <div class="bgbar" id="bgbar" hidden></div>
   <section class="totals" id="totals"></section>
   <div class="tools" id="tools">
     <input id="filter" type="search" placeholder="Search your crate" aria-label="Search your crate">
@@ -300,8 +322,54 @@ dialog::backdrop{background:rgba(8,12,45,.7)}
     <button class="btn alt" id="impJson">Import backup</button>
     <button class="btn alt" id="impLocal" hidden>Import records saved on this device</button>
   </div>
+  <div class="btns">
+    <button class="btn alt" id="impCsv">Import from Discogs (CSV)</button>
+    <button class="btn alt" id="fillMissing">Load missing prices</button>
+  </div>
+  <input type="file" id="csvFile" accept=".csv,text/csv" hidden>
   <p class="hint" id="refreshMsg"></p>
+  <hr style="border:0;border-top:2px solid var(--line);margin:18px 0 4px">
+  <h3 class="frh" style="margin-top:14px">Collection value over time</h3>
+  <div id="histBox"></div>
   <input type="file" id="file" accept="application/json" hidden>
+</div></dialog>
+
+<!-- Record store mode -->
+<dialog id="dStore"><div class="sheet">
+  <div class="row"><h2>Record store</h2><button class="close" data-close aria-label="Close">×</button></div>
+  <p class="hint">Check a record before you buy it: do you own it, what is it worth, how rare is it.</p>
+  <div class="scanrow">
+    <button class="btn scan" id="stScan">Scan a label</button>
+    <button class="btn alt" id="stPick">Use a photo</button>
+  </div>
+  <input type="file" id="stCam" accept="image/*" capture="environment" hidden>
+  <input type="file" id="stLib" accept="image/*" hidden>
+  <p class="hint" id="stMsg"></p>
+  <label for="stQ">Or search by title, catalog number or barcode</label>
+  <div class="row"><input id="stQ" type="search" placeholder="e.g. 5099902988627"><button class="btn" id="stGo">Search</button></div>
+  <ul class="results" id="stResults"></ul>
+  <div id="stCard"></div>
+  <h3 class="frh">Your wantlist</h3>
+  <div id="stWants"></div>
+</div></dialog>
+
+<!-- Gig crates -->
+<dialog id="dCrates"><div class="sheet">
+  <div class="row"><h2>Gig crates</h2><button class="close" data-close aria-label="Close">×</button></div>
+  <p class="hint">Plan what goes in the bag. Crates are private. Friends never see them.</p>
+  <div id="crList"></div>
+  <label for="crName">New crate</label>
+  <div class="row"><input id="crName" maxlength="60" placeholder="e.g. Friday at the warehouse"><button class="btn" id="crAdd">Create</button></div>
+</div></dialog>
+<dialog id="dCrate"><div class="sheet" id="crBody"></div></dialog>
+<dialog id="dPick"><div class="sheet" id="pkBody"></div></dialog>
+
+<!-- Rarity card -->
+<dialog id="dCard"><div class="sheet">
+  <div class="row"><h2>Rarity card</h2><button class="close" data-close aria-label="Close">×</button></div>
+  <canvas id="cardCv" width="1080" height="1350" style="width:100%;height:auto;border-radius:8px;margin-top:12px"></canvas>
+  <p class="hint">Shows the record, its rarity tier and how that was worked out. It never shows a price.</p>
+  <div class="btns"><button class="btn" id="cardShare">Share</button><button class="btn alt" id="cardSave">Save image</button></div>
 </div></dialog>
 
 <script>
@@ -399,6 +467,8 @@ async function enterApp(u){
     $('#auth').hidden = true; $('#app').hidden = false; $('#fab').hidden = false;
     render();
     loadFriends().catch(() => {});
+    loadCrates().catch(() => {});
+    checkMissing();
     offerLocalImport();
   }catch(e){
     enteredFor = null; user = null;
@@ -660,7 +730,7 @@ async function addPicked(){
     };
     fillFromRelease(it, rel);
     await insertItem(it);
-    items.push(it); render();
+    items.push(it); render(); recordHistory(it);
     $('#addbar').hidden = true; picked = null; lastMatrix = null; $('#runRow').hidden = true; $('#results').innerHTML = ''; $('#q').value = ''; $('#aPaid').value = '';
     $('#scanMsg').textContent = 'Added ' + it.artist + ', ' + it.title + '. Scan the next one, or close this.';
     toast('Added ' + it.artist + ' – ' + it.title);
@@ -778,6 +848,7 @@ function openDetail(uid){
       <div class="fact"><b>${num(s.want)} want it</b><small>${s.have ? (demand >= 1 ? 'More people want it than own it' : 'Fewer want it than own it') : ''}</small></div>
       <div class="fact"><b>${num(s.forSale)} for sale</b><small>Lowest listing ${money(s.lowest)}</small></div>
     </div>
+    <div id="eHist"></div>
     ${ed.size ? `<div class="fact" style="margin-top:10px"><b style="font-family:var(--type);color:var(--stamp)">${esc(stampText(it))}</b><small>${ed.source === 'notes' ? 'Edition size found in the Discogs release notes. Check it against the sleeve.' : 'Edition size you entered.'}</small></div>` : ''}
     <div class="two">
       <div><label for="eMedia">Vinyl condition</label><select id="eMedia">${condOptions(it.media)}</select></div>
@@ -792,6 +863,8 @@ function openDetail(uid){
       <div><label for="ePaid">What you paid</label><input id="ePaid" type="number" inputmode="decimal" min="0" step="0.01" value="${esc(it.paid ?? '')}"></div>
       <div></div>
     </div>
+    <label for="eCrate">Add to a gig crate</label>
+    <select id="eCrate"><option value="">${crates.length ? 'Choose a crate…' : 'No crates yet. Make one with the 📦 button.'}</option>${crates.map(c => `<option value="${esc(c.id)}">${esc(c.name)}</option>`).join('')}</select>
     <label class="chk"><input type="checkbox" id="eTrade"${it.forTrade ? ' checked' : ''}> Open to trade</label>
     <label class="chk"><input type="checkbox" id="eHidden"${it.hidden ? ' checked' : ''}> Hide from friends</label>
     <p class="hint">Friends see title, condition and rarity. They never see prices, what you paid, your notes or your etching. Hidden records don’t show up for them at all.</p>
@@ -802,6 +875,7 @@ function openDetail(uid){
     <p class="hint">Prices updated ${s.updated ? new Date(s.updated).toLocaleDateString() : 'never'}.</p>
     <div class="btns">
       <button class="btn" id="eRefresh">Refresh price</button>
+      <button class="btn alt" id="eCard">Rarity card</button>
       <a class="btn alt" style="text-decoration:none" target="_blank" rel="noopener" href="https://www.discogs.com/release/${esc(it.id)}">Open on Discogs</a>
       <button class="btn danger" id="eDelete">Remove</button>
     </div>
@@ -822,7 +896,7 @@ function openDetail(uid){
   ['#eMedia','#eSleeve','#eSize','#eCopy','#ePaid','#eTrade','#eHidden','#eMatrix','#eNotes'].forEach(sel => $(sel).addEventListener('change', upd));
   $('#eRefresh').onclick = async () => {
     const b = $('#eRefresh'); b.innerHTML = '<span class="spin"></span>Refreshing…'; b.disabled = true;
-    try{ const { rel, stats } = await pull(it.id); it.stats = stats; fillFromRelease(it, rel); await saveItem(it); render(); openDetail(uid); toast('Prices updated'); }
+    try{ const { rel, stats } = await pull(it.id); it.stats = stats; fillFromRelease(it, rel); await saveItem(it); recordHistory(it); render(); openDetail(uid); toast('Prices updated'); }
     catch(err){ toast(err.message); b.disabled = false; b.textContent = 'Refresh price'; }
   };
   $('#eDelete').onclick = async () => {
@@ -830,6 +904,13 @@ function openDetail(uid){
       await deleteItem(uid); items = items.filter(x => x.uid !== uid); render(); d.close();
     }
   };
+  $('#eCard').onclick = () => openCard(it);
+  $('#eCrate').addEventListener('change', async e => {
+    const cid = e.target.value; if(!cid) return;
+    try{ const n = await addToCrate(cid, [it.uid]); toast(n ? 'Added to the crate' : 'Already in that crate'); }catch(err){ toast(err.message); }
+    e.target.value = '';
+  });
+  loadRecordHistory(it);
   if(!d.open) d.showModal();
 }
 
@@ -963,7 +1044,7 @@ async function refreshAll(){
   btn.disabled = true;
   for(let i = 0; i < items.length; i++){
     msg.innerHTML = `<span class="spin"></span>Refreshing ${i+1} of ${items.length}. This runs about 20 records a minute.`;
-    try{ const { rel, stats } = await pull(items[i].id); items[i].stats = stats; fillFromRelease(items[i], rel); await saveItem(items[i]); render(); }
+    try{ const { rel, stats } = await pull(items[i].id); items[i].stats = stats; fillFromRelease(items[i], rel); await saveItem(items[i]); recordHistory(items[i]); render(); }
     catch(e){ msg.textContent = e.message; btn.disabled = false; return; }
     await new Promise(r => setTimeout(r, 3200));
   }
@@ -1045,7 +1126,7 @@ $('#authForm').addEventListener('submit', async e => {
 
 $('#fab').onclick = openAdd;
 $('#btnFriends').onclick = openFriends;
-$('#btnSettings').onclick = () => { $('#acctEmail').textContent = (user && user.email) || ''; paintQuota(); $('#dSettings').showModal(); };
+$('#btnSettings').onclick = () => { $('#acctEmail').textContent = (user && user.email) || ''; paintQuota(); $('#dSettings').showModal(); paintHistory(); };
 $('#signOut').onclick = async () => { $('#dSettings').close(); await sb.auth.signOut(); };
 $('#go').onclick = search;
 $('#q').addEventListener('keydown', e => { if(e.key === 'Enter') search(); });
@@ -1084,6 +1165,548 @@ document.addEventListener('click', e => {
   else if(e.target.tagName === 'DIALOG') e.target.close();
 });
 
+
+/* ====================== Feature pack ====================== */
+const sleep = ms => new Promise(r => setTimeout(r, ms));
+const todayStr = () => new Date().toISOString().slice(0, 10);
+const fmtDay = d => { try { return new Date(String(d).slice(0, 10) + 'T00:00:00').toLocaleDateString(undefined, { month: 'short', day: 'numeric' }); } catch { return ''; } };
+const HISTORY_PRO_ONLY = true; /* set to false to show collection history to everyone */
+const spinner = t => `<p class="hint"><span class="spin"></span>${esc(t)}</p>`;
+
+/* ---------- Background bar (imports, price loading) ---------- */
+const bg = { running: false, stop: false };
+function paintBg(text, stoppable){
+  const b = $('#bgbar'); b.hidden = false;
+  b.innerHTML = `<span>${esc(text)}</span>${stoppable ? '<button class="btn" id="bgStop">Stop</button>' : ''}`;
+}
+function checkMissing(){
+  const b = $('#bgbar');
+  if(bg.running) return;
+  const n = items.filter(i => !i.stats).length;
+  if(!n){ b.hidden = true; return; }
+  b.hidden = false;
+  b.innerHTML = `<span>${n} record${n === 1 ? '' : 's'} still need prices and rarity.</span><button class="btn" id="bgGo">Load them</button>`;
+}
+$('#bgbar').addEventListener('click', e => {
+  if(e.target.id === 'bgGo') fillMissing();
+  if(e.target.id === 'bgStop') bg.stop = true;
+});
+async function pullRetry(id){
+  for(let a = 0; a < 3; a++){
+    try{ return await pull(id); }
+    catch(e){
+      if(e.code === 'busy' && a < 2){ paintBg('Discogs is busy. Waiting 30 seconds…', true); await sleep(30000); continue; }
+      throw e;
+    }
+  }
+}
+async function fillMissing(){
+  if(bg.running) return;
+  const todo = items.filter(i => !i.stats);
+  if(!todo.length){ toast('Everything already has prices.'); return; }
+  bg.running = true; bg.stop = false;
+  let done = 0, failed = 0;
+  for(const it of todo){
+    if(bg.stop) break;
+    paintBg(`Loading prices and rarity: ${done + failed + 1} of ${todo.length}`, true);
+    try{
+      const { rel, stats } = await pullRetry(it.id);
+      it.stats = stats; fillFromRelease(it, rel); await saveItem(it); recordHistory(it); done++;
+    }catch(e){ failed++; }
+    if((done + failed) % 4 === 0) render();
+    await sleep(4000); /* keeps us well under the Discogs limit */
+  }
+  bg.running = false; render();
+  toast(bg.stop ? `Stopped after ${done} records.` : `Loaded ${done} record${done === 1 ? '' : 's'}${failed ? `, ${failed} could not be found on Discogs` : ''}.`);
+  checkMissing();
+}
+
+/* ---------- Value history (owner only) ---------- */
+let snapTimer = null;
+function recordHistory(it){
+  if(!sb || !user || !it.uid) return;
+  const e = estimate(it); if(!e) return;
+  sb.from('price_history').upsert({ record_id: it.uid, user_id: user.id, taken_on: todayStr(), value: Math.round(e.v * 100) / 100 }, { onConflict: 'record_id,taken_on' }).then(() => {}, () => {});
+  clearTimeout(snapTimer); snapTimer = setTimeout(saveSnapshot, 3000);
+}
+async function saveSnapshot(){
+  const total = items.reduce((s, i) => s + (estimate(i)?.v || 0), 0);
+  if(!total || !user) return;
+  try{ await sb.from('value_snapshots').upsert({ user_id: user.id, taken_on: todayStr(), total: Math.round(total * 100) / 100, records: items.length }, { onConflict: 'user_id,taken_on' }); }catch{}
+}
+function spark(vals){
+  if(vals.length < 2) return '';
+  const W = 300, H = 70, p = 6, lo = Math.min(...vals), hi = Math.max(...vals), span = hi - lo || 1;
+  const pts = vals.map((v, i) => `${(p + i * (W - 2 * p) / (vals.length - 1)).toFixed(1)},${(H - p - (v - lo) / span * (H - 2 * p)).toFixed(1)}`).join(' ');
+  return `<svg class="spark" viewBox="0 0 ${W} ${H}" preserveAspectRatio="none" role="img" aria-label="Value over time"><polyline points="${pts}" fill="none" stroke="var(--blue)" stroke-width="3" stroke-linejoin="round" stroke-linecap="round" vector-effect="non-scaling-stroke"/></svg>`;
+}
+async function loadRecordHistory(it){
+  const box = $('#eHist'); if(!box) return;
+  const { data, error } = await sb.from('price_history').select('taken_on,value').eq('record_id', it.uid).order('taken_on');
+  if(error || !box.isConnected) return;
+  if(!data || data.length < 2){ box.innerHTML = '<p class="hint">Value history starts building each time prices refresh.</p>'; return; }
+  const a = data[0], z = data[data.length - 1];
+  box.innerHTML = `<label>Estimated value over time</label>${spark(data.map(d => +d.value))}<p class="hint">${esc(fmtDay(a.taken_on))} ${money(+a.value)} to ${esc(fmtDay(z.taken_on))} ${money(+z.value)}. These are Discogs estimates, not sales.</p>`;
+}
+async function paintHistory(){
+  const box = $('#histBox');
+  if(HISTORY_PRO_ONLY && plan !== 'pro'){ box.innerHTML = '<p class="hint">Collection value over time is part of Pro.</p>'; return; }
+  box.innerHTML = spinner('Loading…');
+  const { data, error } = await sb.from('value_snapshots').select('taken_on,total').order('taken_on');
+  if(error){ box.innerHTML = `<p class="hint">${esc(error.message)}</p>`; return; }
+  if(!data || data.length < 2){ box.innerHTML = '<p class="hint">History builds each time prices refresh. Check back after a few refreshes.</p>'; return; }
+  const a = data[0], z = data[data.length - 1];
+  box.innerHTML = `${spark(data.map(d => +d.total))}<p class="hint">${esc(fmtDay(a.taken_on))} ${money(+a.total)} to ${esc(fmtDay(z.taken_on))} ${money(+z.total)}. Discogs estimates, not sales. Only you can see this.</p>`;
+}
+
+/* ---------- Import a Discogs collection (CSV export) ---------- */
+function parseCsv(t){
+  t = t.replace(/^\uFEFF/, '');
+  const rows = []; let row = [], f = '', q = false;
+  for(let i = 0; i < t.length; i++){
+    const c = t[i];
+    if(q){
+      if(c === '"'){ if(t[i + 1] === '"'){ f += '"'; i++; } else q = false; }
+      else f += c;
+    }else if(c === '"') q = true;
+    else if(c === ','){ row.push(f); f = ''; }
+    else if(c === '\n' || c === '\r'){
+      if(c === '\r' && t[i + 1] === '\n') i++;
+      row.push(f); f = '';
+      if(row.length > 1 || row[0] !== '') rows.push(row);
+      row = [];
+    }else f += c;
+  }
+  if(f !== '' || row.length){ row.push(f); rows.push(row); }
+  return rows;
+}
+const COND_FROM = Object.fromEntries(Object.entries(SUGG_KEY).map(([k, v]) => [v.toLowerCase(), k]));
+async function importCsv(file){
+  const rows = parseCsv(await file.text());
+  if(rows.length < 2) throw new Error('That file is empty.');
+  const head = rows[0].map(h => h.trim().toLowerCase());
+  const col = n => head.indexOf(n);
+  const iId = col('release_id');
+  if(iId < 0) throw new Error('This doesn’t look like a Discogs collection export. It has no release_id column.');
+  const [iArtist, iTitle, iLabel, iCat, iFmt, iYear, iMedia, iSleeve, iNotes] =
+    ['artist', 'title', 'label', 'catalog#', 'format', 'released', 'collection media condition', 'collection sleeve condition', 'collection notes'].map(col);
+  const get = (r, i) => (i >= 0 && r[i] != null ? String(r[i]).trim() : '');
+  const have = new Set(items.map(i => Number(i.id)));
+  const out = []; let skippedFmt = 0, dupes = 0;
+  for(const r of rows.slice(1)){
+    const id = Number(get(r, iId)); if(!id) continue;
+    const fmt = get(r, iFmt);
+    if(/\b(CD|CDr|Cass|Cassette|DVD|File|MiniDisc|VHS|Blu-ray)\b/i.test(fmt) && !/\b(LP|Vinyl)\b|\b(12|10|7)"/i.test(fmt)){ skippedFmt++; continue; }
+    if(have.has(id)){ dupes++; continue; }
+    have.add(id);
+    out.push({
+      id, media: COND_FROM[get(r, iMedia).toLowerCase()] || 'VG+', sleeve: COND_FROM[get(r, iSleeve).toLowerCase()] || 'VG+',
+      paid: null, notes: get(r, iNotes), edition: {}, matrix: [],
+      artist: cleanName(get(r, iArtist)), title: get(r, iTitle), year: parseInt(get(r, iYear), 10) || undefined,
+      label: cleanName(get(r, iLabel)), catno: get(r, iCat), format: fmt
+    });
+  }
+  if(!out.length){ toast(`Nothing new to import. ${dupes} already in your crate${skippedFmt ? `, ${skippedFmt} not vinyl` : ''}.`); return; }
+  paintBg(`Importing ${out.length} records…`);
+  let added = 0;
+  for(let i = 0; i < out.length; i += 100){
+    const chunk = out.slice(i, i + 100);
+    const { data, error } = await sb.from('records').insert(chunk.map(toRow)).select('id,added_at');
+    if(error){ checkMissing(); throw new Error(error.message); }
+    data.forEach((r, k) => { chunk[k].uid = r.id; chunk[k].added = new Date(r.added_at).getTime(); items.push(chunk[k]); });
+    added += data.length; render();
+  }
+  toast(`Imported ${added} record${added === 1 ? '' : 's'}${dupes ? `, ${dupes} already there` : ''}${skippedFmt ? `, ${skippedFmt} not vinyl skipped` : ''}.`);
+  fillMissing(); /* fills in prices, rarity and covers in the background */
+}
+
+/* ---------- Record store mode + wantlist ---------- */
+let storeRes = [], storeCur = null, storeCond = 'VG+', storeShop = '', wants = [];
+function openStore(){
+  $('#dStore').showModal();
+  paintWants(); loadWants();
+}
+async function loadWants(){
+  const { data, error } = await sb.from('wants').select('*').order('created_at', { ascending: false });
+  if(error){ $('#stWants').innerHTML = `<p class="hint">${esc(error.message)}</p>`; return; }
+  wants = data || []; paintWants();
+}
+function paintWants(){
+  $('#stWants').innerHTML = wants.length ? wants.map(w => {
+    const s = w.snapshot || {};
+    return `<div class="stwant">
+      ${s.cover ? `<img src="${esc(s.cover)}" alt="" loading="lazy" referrerpolicy="no-referrer" width="48" height="48" style="border-radius:3px;object-fit:cover">` : ''}
+      <div class="vmeta" style="flex:1"><b>${esc(s.artist)}</b><div>${esc(s.title)}</div>
+        <div class="hint">${s.lowest != null ? `Lowest listing ${money(s.lowest)}` : 'No listings'}${s.saved ? `, checked ${esc(fmtDay(new Date(s.saved).toISOString()))}` : ''}</div></div>
+      <button class="btn sm alt" data-act="wchk" data-id="${esc(w.id)}">Check</button>
+      <button class="btn sm alt" data-act="wdel" data-id="${esc(w.id)}">Remove</button></div>`;
+  }).join('') : '<p class="hint">Nothing here yet. Look up a record and tap Save to wantlist.</p>';
+}
+$('#stWants').addEventListener('click', async e => {
+  const b = e.target.closest('button[data-act]'); if(!b) return;
+  const w = wants.find(x => x.id === b.dataset.id); if(!w) return;
+  try{
+    if(b.dataset.act === 'wdel'){
+      const { error } = await sb.from('wants').delete().eq('id', w.id); if(error) throw new Error(error.message);
+      wants = wants.filter(x => x.id !== w.id); paintWants();
+    }else{
+      b.disabled = true; b.textContent = '…';
+      const { rel, stats } = await pull(w.discogs_id);
+      w.snapshot = { ...w.snapshot, lowest: stats.lowest, sugg: stats.sugg, have: stats.have, saved: Date.now() };
+      const { error } = await sb.from('wants').update({ snapshot: w.snapshot }).eq('id', w.id); if(error) throw new Error(error.message);
+      paintWants();
+    }
+  }catch(err){ toast(err.message); paintWants(); }
+});
+
+function storeResultsHtml(res){
+  return res.map((r, i) => `<li><button data-i="${i}" aria-pressed="false">
+      <img src="${esc(r.thumb || '')}" alt="" referrerpolicy="no-referrer">
+      <span><b>${esc(cleanName(r.title))}</b><small>${esc([r.year, r.country, (r.label || [])[0], r.catno].filter(Boolean).join(', '))}<br>${esc((r.format || []).join(', '))}</small></span>
+    </button></li>`).join('');
+}
+async function storeSearch(){
+  const q = $('#stQ').value.trim(); if(!q) return;
+  const box = $('#stResults');
+  box.innerHTML = '<li class="hint"><span class="spin"></span>Searching Discogs…</li>';
+  try{
+    const params = /^\d{8,14}$/.test(q.replace(/\s/g, '')) ? { barcode: q.replace(/\s/g, '') } : { q };
+    const d = await fn('discogs', { action: 'search', params });
+    storeRes = d.results || [];
+    box.innerHTML = storeRes.length ? storeResultsHtml(storeRes) : '<li class="hint">No vinyl releases found. Try the catalog number.</li>';
+  }catch(e){ box.innerHTML = `<li class="hint">${esc(e.message)}</li>`; }
+}
+async function storePhoto(file){
+  if(!file) return;
+  const msg = $('#stMsg');
+  msg.innerHTML = '<span class="spin"></span>Reading the label…';
+  try{
+    const info = await scanPhoto('label', await photoToJpeg(file));
+    const read = [info.artist, info.title, info.label, info.catno].filter(Boolean).join(', ');
+    if(!read){ msg.textContent = 'Nothing legible on that photo. Try again with the label filling the frame.'; return; }
+    msg.textContent = 'Read: ' + read;
+    storeRes = await scanSearch(info);
+    const box = $('#stResults');
+    box.innerHTML = storeRes.length ? storeResultsHtml(storeRes) : '<li class="hint">No match on Discogs. Try searching below.</li>';
+    if(storeRes.length){ box.querySelector('button[data-i="0"]').setAttribute('aria-pressed', 'true'); storeLookup(storeRes[0]); }
+  }catch(e){ msg.textContent = e.message; }
+}
+$('#stResults').addEventListener('click', e => {
+  const b = e.target.closest('button[data-i]'); if(!b) return;
+  $('#stResults').querySelectorAll('button').forEach(x => x.setAttribute('aria-pressed', 'false'));
+  b.setAttribute('aria-pressed', 'true');
+  storeLookup(storeRes[+b.dataset.i]);
+});
+async function storeLookup(r){
+  const card = $('#stCard');
+  card.innerHTML = spinner('Checking Discogs…');
+  try{
+    const { rel, stats } = await pull(r.id);
+    const it = { id: Number(r.id), stats, edition: {}, media: 'VG+' };
+    fillFromRelease(it, rel);
+    storeCur = it; storeCond = 'VG+'; storeShop = '';
+    paintStoreCard();
+    card.scrollIntoView({ block: 'nearest' });
+  }catch(e){ card.innerHTML = `<p class="hint">${esc(e.message)}</p>`; }
+}
+function paintStoreCard(){
+  const it = storeCur; if(!it) return;
+  const s = it.stats || {};
+  const mine = items.filter(i => Number(i.id) === it.id);
+  const e = estimate({ ...it, media: storeCond }), r = rarity(it);
+  const known = s.have != null;
+  const basis = known ? `Held by ${num(s.have)} Discogs collectors, ${num(s.want)} want it` : 'Rarity unknown';
+  const ed = it.edition && it.edition.size ? `Edition of ${num(it.edition.size)} (from Discogs notes)` : '';
+  $('#stCard').innerHTML = `
+    <div class="dhead">${art(it)}<div><div class="a">${esc(it.artist)}</div><div class="t">${esc(it.title)}</div>
+      <div class="s">${esc([it.year, it.country, it.label, it.catno].filter(Boolean).join(', '))}<br>${esc(it.format || '')}</div></div></div>
+    ${mine.length ? `<div class="verdict fair">You already own this (${esc(mine.map(m => m.media).join(', '))}).</div>` : ''}
+    <div class="facts">
+      <div class="fact hl"><b>${e ? money(e.v) : 'No price'}</b><small>${esc(e ? e.basis : 'Nothing listed on Discogs right now')}</small></div>
+      <div class="fact"><b>${esc(known ? r.name : 'Unknown')}</b><small>${esc(basis)}</small></div>
+      <div class="fact"><b>${num(s.forSale)} for sale</b><small>Lowest listing ${money(s.lowest)}</small></div>
+      ${ed ? `<div class="fact"><b style="font-family:var(--type);color:var(--stamp)">Ltd. ${num(it.edition.size)}</b><small>${esc(ed)}. Check it against the sleeve.</small></div>` : ''}
+    </div>
+    <div class="two">
+      <div><label for="stCond">Condition you’d buy</label><select id="stCond">${condOptions(storeCond)}</select></div>
+      <div><label for="stShop">Shop price</label><input id="stShop" type="number" inputmode="decimal" min="0" step="0.01" placeholder="0.00" value="${esc(storeShop)}"></div>
+    </div>
+    <div id="stVerdict"></div>
+    <div class="btns"><button class="btn" id="stAdd">Add to collection</button><button class="btn alt" id="stWant">Save to wantlist</button></div>`;
+  paintVerdict();
+}
+function paintVerdict(){
+  const box = $('#stVerdict'); if(!box || !storeCur) return;
+  const shop = parseFloat(storeShop);
+  if(!shop || shop <= 0){ box.className = ''; box.textContent = ''; return; }
+  const e = estimate({ ...storeCur, media: storeCond });
+  if(!e){ box.className = 'verdict'; box.textContent = 'No price data to compare with.'; return; }
+  const pct = Math.round((shop / e.v - 1) * 100);
+  let cls = 'fair', t = 'Close to the Discogs estimate.';
+  if(shop <= e.v * 0.85){ cls = 'good'; t = `${Math.abs(pct)}% under the Discogs estimate for ${storeCond}.`; }
+  else if(shop > e.v * 1.15){ cls = 'high'; t = `${pct}% over the Discogs estimate for ${storeCond}.`; }
+  box.className = 'verdict ' + cls;
+  box.textContent = t + ' Estimates come from listings, not sales.';
+}
+$('#stCard').addEventListener('input', e => { if(e.target.id === 'stShop'){ storeShop = e.target.value; paintVerdict(); } });
+$('#stCard').addEventListener('change', e => { if(e.target.id === 'stCond'){ storeCond = e.target.value; paintStoreCard(); } });
+$('#stCard').addEventListener('click', async e => {
+  const b = e.target.closest('button'); if(!b || !storeCur) return;
+  try{
+    if(b.id === 'stAdd'){
+      b.disabled = true;
+      const it = { ...storeCur, sleeve: 'VG+', media: storeCond, paid: storeShop ? +storeShop : null, notes: '', matrix: [], added: Date.now() };
+      await insertItem(it); items.push(it); render(); recordHistory(it);
+      toast('Added ' + it.artist + ' – ' + it.title); paintStoreCard();
+    }else if(b.id === 'stWant'){
+      const it = storeCur, st = it.stats || {};
+      const snap = { artist: it.artist, title: it.title, year: it.year, label: it.label, catno: it.catno, cover: it.cover, format: it.format,
+        lowest: st.lowest ?? null, sugg: st.sugg ?? null, have: st.have ?? null, saved: Date.now() };
+      const { error } = await sb.from('wants').upsert({ user_id: user.id, discogs_id: it.id, snapshot: snap }, { onConflict: 'user_id,discogs_id' });
+      if(error) throw new Error(error.message);
+      toast('Saved to your wantlist'); await loadWants();
+    }
+  }catch(err){ toast(err.message); }
+});
+
+/* ---------- Gig crates ---------- */
+let crates = [], crateItems = [], curCrate = null, pickSel = new Set();
+async function loadCrates(){
+  const [c, ci] = await Promise.all([
+    sb.from('crates').select('*').order('created_at', { ascending: false }),
+    sb.from('crate_items').select('*')
+  ]);
+  if(c.error) throw new Error(c.error.message);
+  crates = c.data || []; crateItems = ci.data || [];
+}
+const recById = uid => items.find(i => i.uid === uid);
+function crateRows(cid){ return crateItems.filter(x => x.crate_id === cid && recById(x.record_id)).sort((a, b) => a.position - b.position); }
+async function openCrates(){
+  $('#dCrates').showModal();
+  $('#crList').innerHTML = spinner('Loading…');
+  try{ await loadCrates(); }catch(e){ $('#crList').innerHTML = `<p class="hint">${esc(e.message)}</p>`; return; }
+  paintCrates();
+}
+function paintCrates(){
+  $('#crList').innerHTML = crates.length ? crates.map(c => {
+    const rows = crateRows(c.id);
+    const total = rows.reduce((s, x) => s + (estimate(recById(x.record_id))?.v || 0), 0);
+    return `<button class="cratecard" data-cid="${esc(c.id)}"><span><b>${esc(c.name)}</b><br><span class="hint">${rows.length} record${rows.length === 1 ? '' : 's'}${c.gig_date ? ', ' + esc(fmtDay(c.gig_date)) : ''}</span></span><b>${money(total)}</b></button>`;
+  }).join('') : '<p class="hint">No crates yet. Make one for your next gig.</p>';
+}
+$('#crList').addEventListener('click', e => { const b = e.target.closest('[data-cid]'); if(b) openCrate(b.dataset.cid); });
+$('#crAdd').onclick = async () => {
+  const name = $('#crName').value.trim(); if(!name) return;
+  const { data, error } = await sb.from('crates').insert({ name }).select().single();
+  if(error){ toast(error.message); return; }
+  crates.unshift(data); $('#crName').value = ''; paintCrates(); openCrate(data.id);
+};
+function openCrate(cid){ curCrate = cid; $('#dCrate').showModal(); paintCrate(); }
+function paintCrate(){
+  const d = $('#dCrate'), c = crates.find(x => x.id === curCrate);
+  if(!c){ d.close(); return; }
+  const st = d.scrollTop;
+  const rows = crateRows(c.id);
+  const limit = Number(localStorage.getItem('crate.risk') || 150);
+  let total = 0, risky = 0, packed = 0, back = 0;
+  const html = rows.map(x => {
+    const rec = recById(x.record_id), e = estimate(rec);
+    const isRisky = e && e.v >= limit;
+    total += e ? e.v : 0; if(isRisky) risky++; if(x.packed) packed++; if(x.returned) back++;
+    return `<div class="crrow">
+      ${rec.cover ? `<img src="${esc(rec.cover)}" alt="" loading="lazy" referrerpolicy="no-referrer">` : '<div class="vnoart">♪</div>'}
+      <div class="vmeta"><b>${esc(rec.artist)}</b><div>${esc(rec.title)}</div>
+        <div class="hint">${esc([rec.year, rec.label].filter(Boolean).join(', '))}<span class="cond">${esc(rec.media)}</span></div>
+        ${e ? `<div class="${isRisky ? 'warn' : 'hint'}">${money(e.v)}${isRisky ? ' Valuable. Think about leaving it home.' : ''}</div>` : ''}
+        <div class="crctl">
+          <label><input type="checkbox" data-t="packed" data-r="${esc(x.record_id)}"${x.packed ? ' checked' : ''}>Packed</label>
+          <label><input type="checkbox" data-t="returned" data-r="${esc(x.record_id)}"${x.returned ? ' checked' : ''}>Back home</label>
+          <button class="mini" data-mv="-1" data-r="${esc(x.record_id)}" aria-label="Move up">↑</button>
+          <button class="mini" data-mv="1" data-r="${esc(x.record_id)}" aria-label="Move down">↓</button>
+          <button class="mini" data-rm="1" data-r="${esc(x.record_id)}">Remove</button>
+        </div></div></div>`;
+  }).join('');
+  $('#crBody').innerHTML = `
+    <div class="row"><h2>${esc(c.name)}</h2><button class="close" data-close aria-label="Close">×</button></div>
+    <p class="hint">${rows.length} record${rows.length === 1 ? '' : 's'}. Packed ${packed} of ${rows.length}. Back home ${back} of ${rows.length}.</p>
+    <div class="facts">
+      <div class="fact hl"><b>${money(total)}</b><small>Estimated value in this bag. Only you see this.</small></div>
+      <div class="fact"><b>${risky}</b><small>worth ${money(limit)} or more</small></div>
+    </div>
+    <label for="crLimit">Flag records worth at least</label>
+    <input id="crLimit" type="number" inputmode="numeric" min="0" value="${esc(limit)}">
+    <div class="btns"><button class="btn" id="crPick">Add records</button><button class="btn alt" id="crReset">Reset checklist</button></div>
+    ${html || '<p class="hint">Nothing in this crate yet.</p>'}
+    <div class="btns"><button class="btn danger" id="crDel">Delete crate</button></div>`;
+  d.scrollTop = st;
+}
+async function setCrateFlag(rid, field, val){
+  const x = crateItems.find(i => i.crate_id === curCrate && i.record_id === rid); if(!x) return;
+  x[field] = val; paintCrate();
+  const { error } = await sb.from('crate_items').update({ [field]: val }).eq('crate_id', curCrate).eq('record_id', rid);
+  if(error) toast(error.message);
+}
+async function moveCrateItem(rid, dir){
+  const rows = crateRows(curCrate);
+  const i = rows.findIndex(x => x.record_id === rid), j = i + dir;
+  if(i < 0 || j < 0 || j >= rows.length) return;
+  [rows[i], rows[j]] = [rows[j], rows[i]];
+  rows.forEach((x, k) => { x.position = k; });
+  paintCrate();
+  const { error } = await sb.from('crate_items').upsert(rows.map(x => ({ crate_id: x.crate_id, record_id: x.record_id, position: x.position })), { onConflict: 'crate_id,record_id' });
+  if(error) toast(error.message);
+}
+$('#crBody').addEventListener('change', async e => {
+  const t = e.target;
+  if(t.dataset.t) setCrateFlag(t.dataset.r, t.dataset.t, t.checked);
+  if(t.id === 'crLimit'){ try{ localStorage.setItem('crate.risk', String(Math.max(0, +t.value || 0))); }catch{} paintCrate(); }
+});
+$('#crBody').addEventListener('click', async e => {
+  const b = e.target.closest('button'); if(!b) return;
+  try{
+    if(b.dataset.mv) moveCrateItem(b.dataset.r, +b.dataset.mv);
+    else if(b.dataset.rm){
+      const { error } = await sb.from('crate_items').delete().eq('crate_id', curCrate).eq('record_id', b.dataset.r);
+      if(error) throw new Error(error.message);
+      crateItems = crateItems.filter(x => !(x.crate_id === curCrate && x.record_id === b.dataset.r)); paintCrate();
+    }else if(b.id === 'crPick') openPicker();
+    else if(b.id === 'crReset'){
+      const { error } = await sb.from('crate_items').update({ packed: false, returned: false }).eq('crate_id', curCrate);
+      if(error) throw new Error(error.message);
+      crateItems.filter(x => x.crate_id === curCrate).forEach(x => { x.packed = false; x.returned = false; }); paintCrate();
+    }else if(b.id === 'crDel'){
+      if(!confirm('Delete this crate? The records stay in your collection.')) return;
+      const { error } = await sb.from('crates').delete().eq('id', curCrate);
+      if(error) throw new Error(error.message);
+      crates = crates.filter(c => c.id !== curCrate); crateItems = crateItems.filter(x => x.crate_id !== curCrate);
+      $('#dCrate').close(); paintCrates();
+    }
+  }catch(err){ toast(err.message); }
+});
+async function addToCrate(cid, uids){
+  const have = new Set(crateItems.filter(x => x.crate_id === cid).map(x => x.record_id));
+  let pos = Math.max(-1, ...crateItems.filter(x => x.crate_id === cid).map(x => x.position)) + 1;
+  const rows = uids.filter(u => !have.has(u)).map(u => ({ crate_id: cid, record_id: u, user_id: user.id, position: pos++ }));
+  if(!rows.length) return 0;
+  const { data, error } = await sb.from('crate_items').insert(rows).select();
+  if(error) throw new Error(error.message);
+  crateItems.push(...(data || rows.map(r => ({ ...r, packed: false, returned: false }))));
+  return rows.length;
+}
+function openPicker(){
+  pickSel = new Set();
+  $('#pkBody').innerHTML = `
+    <div class="row"><h2>Add records</h2><button class="close" data-close aria-label="Close">×</button></div>
+    <input id="pkQ" type="search" placeholder="Search your crate" style="margin-top:12px">
+    <div id="pkList"></div>
+    <div class="btns"><button class="btn" id="pkAdd">Add selected</button></div>`;
+  paintPickList('');
+  $('#dPick').showModal();
+}
+function paintPickList(q){
+  const inCrate = new Set(crateItems.filter(x => x.crate_id === curCrate).map(x => x.record_id));
+  const list = items.filter(i => !inCrate.has(i.uid)).filter(i => !q || [i.artist, i.title, i.label].join(' ').toLowerCase().includes(q.toLowerCase()));
+  $('#pkList').innerHTML = list.length ? list.map(i => `<label class="pickrow"><input type="checkbox" data-u="${esc(i.uid)}"${pickSel.has(i.uid) ? ' checked' : ''}>
+      <span><b>${esc(i.artist)}</b> ${esc(i.title)}<br><span class="hint">${esc([i.year, i.label].filter(Boolean).join(', '))}</span></span></label>`).join('') : '<p class="hint">No records to add.</p>';
+}
+$('#pkBody').addEventListener('input', e => { if(e.target.id === 'pkQ') paintPickList(e.target.value.trim()); });
+$('#pkBody').addEventListener('change', e => { const u = e.target.dataset.u; if(u){ if(e.target.checked) pickSel.add(u); else pickSel.delete(u); } });
+$('#pkBody').addEventListener('click', async e => {
+  if(e.target.id !== 'pkAdd') return;
+  try{ const n = await addToCrate(curCrate, [...pickSel]); $('#dPick').close(); paintCrate(); toast(n ? `Added ${n} record${n === 1 ? '' : 's'}` : 'Nothing selected'); }
+  catch(err){ toast(err.message); }
+});
+
+/* ---------- Rarity card (never shows a price) ---------- */
+let cardItem = null;
+function loadImg(url){
+  return new Promise(res => {
+    if(!url) return res(null);
+    const i = new Image(); i.crossOrigin = 'anonymous'; i.referrerPolicy = 'no-referrer';
+    i.onload = () => res(i); i.onerror = () => res(null); i.src = url;
+  });
+}
+function fitText(g, text, maxW, size, weight, family){
+  let s = size;
+  for(; s > 26; s -= 2){ g.font = `${weight} ${s}px ${family}`; if(g.measureText(text).width <= maxW) return text; }
+  g.font = `${weight} ${s}px ${family}`;
+  let t = text; while(t.length > 3 && g.measureText(t + '…').width > maxW) t = t.slice(0, -1);
+  return t + '…';
+}
+async function drawCard(it){
+  try{ await Promise.all([document.fonts.load('800 64px "Bricolage Grotesque"'), document.fonts.load('400 34px "Special Elite"')]); }catch{}
+  const cv = $('#cardCv'), g = cv.getContext('2d'), W = 1080, H = 1350, SANS = '"Bricolage Grotesque", system-ui, sans-serif', TYPE = '"Special Elite", "Courier New", monospace';
+  const r = rarity(it), s = it.stats || {}, ed = it.edition || {};
+  g.fillStyle = '#1c2b8f'; g.fillRect(0, 0, W, H);
+  const img = (await loadImg(it.coverLg || it.cover)) || (await loadImg(it.cover));
+  const S = 740, x = (W - S) / 2, y = 80;
+  g.save(); g.shadowColor = 'rgba(0,0,0,.45)'; g.shadowBlur = 40; g.shadowOffsetY = 18; g.fillStyle = '#121c63'; g.fillRect(x, y, S, S); g.restore();
+  if(img){
+    const m = Math.min(img.width, img.height);
+    g.drawImage(img, (img.width - m) / 2, (img.height - m) / 2, m, m, x, y, S, S);
+  }else{
+    g.fillStyle = '#0d0f1a'; g.beginPath(); g.arc(W / 2, y + S / 2, S * 0.47, 0, Math.PI * 2); g.fill();
+    g.strokeStyle = 'rgba(255,255,255,.08)'; g.lineWidth = 3;
+    for(let k = 1; k <= 6; k++){ g.beginPath(); g.arc(W / 2, y + S / 2, S * (0.22 + k * 0.04), 0, Math.PI * 2); g.stroke(); }
+    g.fillStyle = '#ffd23f'; g.beginPath(); g.arc(W / 2, y + S / 2, S * 0.17, 0, Math.PI * 2); g.fill();
+    g.fillStyle = '#0d0f1a'; g.beginPath(); g.arc(W / 2, y + S / 2, S * 0.018, 0, Math.PI * 2); g.fill();
+  }
+  const L = 90, MAXW = W - 2 * L;
+  g.textBaseline = 'alphabetic'; g.fillStyle = '#f6f5f0';
+  g.fillText(fitText(g, it.artist || '', MAXW, 62, 800, SANS), L, 920);
+  g.globalAlpha = 0.92; g.fillText(fitText(g, it.title || '', MAXW, 42, 400, SANS), L, 976); g.globalAlpha = 1;
+  const on = 5 - r.i;
+  for(let k = 0; k < 5; k++){ g.fillStyle = k < on ? '#ffd23f' : 'rgba(246,245,240,.25)'; g.fillRect(L + k * 78, 1022, 66, 18); }
+  g.fillStyle = '#ffd23f'; g.font = `800 92px ${SANS}`; g.fillText(r.name, L, 1136);
+  g.fillStyle = '#f6f5f0'; g.font = `400 36px ${SANS}`;
+  g.fillText(fitText(g, `Held by ${num(s.have)} Discogs collectors`, MAXW, 36, 400, SANS), L, 1190);
+  if(ed.size){
+    const label = ed.copy ? `${ed.copy}/${ed.size}` : `Edition of ${num(ed.size)}`;
+    const src = ed.source === 'notes' ? 'from Discogs notes' : 'entered by the owner';
+    g.font = `400 34px ${TYPE}`;
+    const tw = g.measureText(label).width;
+    g.fillStyle = '#f6f5f0'; g.fillRect(L, 1212, tw + 40, 56);
+    g.strokeStyle = '#d92d1c'; g.lineWidth = 4; g.strokeRect(L, 1212, tw + 40, 56);
+    g.fillStyle = '#d92d1c'; g.fillText(label, L + 20, 1252);
+    g.fillStyle = '#f6f5f0'; g.font = `400 28px ${SANS}`; g.fillText(src, L + tw + 62, 1250);
+  }
+  g.fillStyle = 'rgba(246,245,240,.7)'; g.font = `800 30px ${SANS}`; g.fillText('Crate', L, 1316);
+}
+async function openCard(it){
+  if(!it.stats || it.stats.have == null){ toast('Tap Refresh price first so Crate can check the rarity.'); return; }
+  cardItem = it; $('#dCard').showModal(); await drawCard(it);
+}
+function cardBlob(){ return new Promise(res => { try{ $('#cardCv').toBlob(res, 'image/png'); }catch{ res(null); } }); }
+async function saveCard(){
+  const b = await cardBlob(); if(!b){ toast('Could not make the image. Try again.'); return; }
+  const a = document.createElement('a'); a.href = URL.createObjectURL(b); a.download = 'crate-rarity.png'; a.click();
+  setTimeout(() => URL.revokeObjectURL(a.href), 2000);
+}
+async function shareCard(){
+  const b = await cardBlob(); if(!b){ toast('Could not make the image. Try again.'); return; }
+  const f = new File([b], 'crate-rarity.png', { type: 'image/png' });
+  if(navigator.canShare && navigator.canShare({ files: [f] })){ try{ await navigator.share({ files: [f] }); }catch{} }
+  else saveCard();
+}
+$('#cardShare').onclick = shareCard;
+$('#cardSave').onclick = saveCard;
+
+/* ---------- Wiring for the feature pack ---------- */
+$('#btnStore').onclick = openStore;
+$('#btnCrates').onclick = openCrates;
+$('#stScan').onclick = () => $('#stCam').click();
+$('#stPick').onclick = () => $('#stLib').click();
+['#stCam', '#stLib'].forEach(id => $(id).addEventListener('change', e => { const f = e.target.files[0]; e.target.value = ''; storePhoto(f); }));
+$('#stGo').onclick = storeSearch;
+$('#stQ').addEventListener('keydown', e => { if(e.key === 'Enter') storeSearch(); });
+$('#impCsv').onclick = () => $('#csvFile').click();
+$('#csvFile').addEventListener('change', async e => {
+  const f = e.target.files[0]; e.target.value = ''; if(!f) return;
+  $('#dSettings').close();
+  try{ await importCsv(f); }catch(err){ toast(err.message); checkMissing(); }
+});
+$('#fillMissing').onclick = () => { $('#dSettings').close(); fillMissing(); };
+
 /* ---------- Start ---------- */
 if(!sb){ showAuth('signin'); }
 else{
@@ -1094,7 +1717,7 @@ else{
       if(session && session.user){
         if(authMode !== 'reset' && enteredFor !== session.user.id) enterApp(session.user);
       }else{
-        enteredFor = null; user = null; items = []; friends = []; myUsername = null;
+        enteredFor = null; user = null; items = []; friends = []; myUsername = null; crates = []; crateItems = []; wants = [];
         showAuth('signin');
       }
     }, 0);

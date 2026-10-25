@@ -440,6 +440,11 @@ body{font-variant-ligatures:none;font-feature-settings:"liga" 0,"clig" 0}
 .authcard input,.authcard .gbtn,.authcard .btn{--bd:var(--ink)}
 .authcard input:focus{--bd:var(--blue)}
 .rec{align-self:start}
+.sheet .vrow.vbtn{display:flex;width:100%;text-align:left;background:none;color:var(--ink);font:inherit;padding:14px 0;border-left:0;border-right:0;border-bottom:0;cursor:pointer}
+.sheet .vrow.vbtn:active{background:#e4ecf6}
+@media(hover:hover){.sheet .vrow.vbtn:hover{background:#eef3fa}}
+.sheet .hint + input,.sheet .hint + select,.sheet .hint + textarea,.sheet .msg + input,.sheet p + input:not([type=checkbox]){margin-top:16px}
+.sheet input + input{margin-top:20px !important}
 
 /* ============================ MOTION (all of it respects reduced-motion) ============================ */
 @media (prefers-reduced-motion:no-preference){
@@ -603,6 +608,9 @@ body{font-variant-ligatures:none;font-feature-settings:"liga" 0,"clig" 0}
   <div class="row"><h2>Friends</h2><button class="close" data-close aria-label="Close">×</button></div>
   <div id="frBody"></div>
 </div></dialog>
+
+<!-- One record from a friend's crate -->
+<dialog id="dFR"><div class="sheet" id="frRecBody"></div></dialog>
 
 <!-- A friend's crate, or the trade board -->
 <dialog id="dView"><div class="sheet">
@@ -1443,7 +1451,7 @@ $('#frBody').addEventListener('click', async e => {
   }
 });
 
-let viewRows = [], viewMode = 'all', viewKind = 'friend';
+let viewRows = [], viewShown = [], viewMode = 'all', viewKind = 'friend', frCur = null, frPulled = null;
 async function openFriendView(uid, name){
   viewKind = 'friend'; viewMode = 'all'; viewRows = [];
   $('#vTitle').textContent = '@' + name; $('#vSub').textContent = 'Loading…';
@@ -1477,22 +1485,85 @@ function paintView(){
     $('#vSub').textContent = rows.length ? `${num(rows.length)} record${rows.length === 1 ? '' : 's'} your friends would trade.` : 'Nothing is marked open to trade yet.';
     $('#vChips').innerHTML = '';
   }
-  $('#vList').innerHTML = list.length ? list.map(viewRow).join('') : '<p class="hint">Nothing here yet.</p>';
+  viewShown = list;
+  $('#vList').innerHTML = list.length ? list.map((r, i) => viewRow(r, i)).join('') : '<p class="hint">Nothing here yet.</p>';
 }
-function viewRow(r){
+function viewRow(r, idx){
   const known = r.have != null;
   const rar = known ? rarity({ stats: { have: r.have }, edition: { size: r.edition_size } }) : { i: 5, name: 'Unknown' };
   const basis = known ? `Held by ${num(r.have)} Discogs collectors` : 'Rarity unknown';
   const ed = r.edition_size ? `Edition of ${num(r.edition_size)} (${r.edition_source === 'notes' ? 'from Discogs notes' : 'entered by owner'})` : '';
-  return `<div class="vrow">
+  return `<button class="vrow vbtn" data-vi="${idx}" aria-label="Open ${esc(r.artist)}, ${esc(r.title)}">
     ${r.cover ? `<img src="${esc(r.cover)}" alt="" loading="lazy" referrerpolicy="no-referrer">` : '<div class="vnoart">' + sprite('note') + '</div>'}
     <div class="vmeta"><b>${esc(r.artist)}</b><div>${esc(r.title)}</div>
       <div class="hint">${esc([r.release_year, r.label].filter(Boolean).join(', '))}${r.media ? `<span class="cond">${esc(r.media)}</span>` : ''}</div>
       ${known ? pips(rar) : ''}
       <div class="hint">${esc(basis)}${ed ? '. ' + esc(ed) : ''}</div>
       <div class="tags">${r.both ? '<span class="tag">You own this too</span>' : ''}${r.for_trade ? '<span class="tag trade">Open to trade</span>' : ''}${r.owner_username ? `<span class="owner">@${esc(r.owner_username)}</span>` : ''}</div>
-    </div></div>`;
+    </div></button>`;
 }
+/* ---------- One record from a friend ---------- */
+$('#vList').addEventListener('click', e => {
+  const b = e.target.closest('[data-vi]'); if(!b) return;
+  const r = viewShown[+b.dataset.vi]; if(r) openFriendRecord(r);
+});
+function paintFriendRecord(r, rel, who){
+  const known = r.have != null;
+  const rar = known ? rarity({ stats: { have: r.have }, edition: { size: r.edition_size } }) : { i: 5, name: 'Unknown' };
+  const lab = rel && (rel.labels || [])[0];
+  const meta = [rel ? (rel.year || r.release_year) : r.release_year, rel && rel.country, lab ? lab.name : r.label, lab && lab.catno].filter(Boolean).join(', ');
+  const fmt = rel ? (rel.formats || []).map(f => [f.name, ...(f.descriptions || []), f.text].filter(Boolean).join(', ')).join(' · ') : '';
+  const tags = rel ? [...(rel.genres || []), ...(rel.styles || [])].join(', ') : '';
+  const cover = (rel && rel.images && rel.images[0] && (rel.images[0].uri || rel.images[0].uri150)) || r.cover;
+  const ed = r.edition_size ? `Edition of ${num(r.edition_size)} (${r.edition_source === 'notes' ? 'from Discogs notes' : 'entered by the owner'}). Check it against the sleeve.` : '';
+  $('#frRecBody').innerHTML = `
+    <div class="row"><h2>${esc(who ? '@' + who : 'Record')}</h2><button class="close" data-close aria-label="Close">×</button></div>
+    <div class="dhead">
+      ${cover ? `<img src="${esc(cover)}" alt="" referrerpolicy="no-referrer" onerror="this.onerror=null;this.src='${esc(r.cover || '')}'">` : ''}
+      <div><div class="a">${esc(r.artist)}</div><div class="t">${esc(r.title)}</div>
+      <div class="s">${esc(meta)}${fmt ? '<br>' + esc(fmt) : ''}${tags ? '<br>' + esc(tags) : ''}${rel ? '' : '<br>Loading more details…'}</div></div>
+    </div>
+    ${r.both ? '<div class="verdict fair">You own this pressing too.</div>' : ''}
+    <div class="facts">
+      <div class="fact"><b>${esc(rar.name)}</b><small>${esc(known ? `Held by ${num(r.have)} Discogs collectors` : 'Rarity unknown')}</small></div>
+      <div class="fact"><b>${esc(r.media || 'Not set')}</b><small>Their vinyl condition</small></div>
+      ${r.for_trade ? '<div class="fact hl"><b>Trade</b><small>Open to trade</small></div>' : ''}
+      ${ed ? `<div class="fact"><b style="font-family:var(--type)">Ltd. ${num(r.edition_size)}</b><small>${esc(ed)}</small></div>` : ''}
+    </div>
+    <div class="btns">
+      <a class="btn alt" style="text-decoration:none" target="_blank" rel="noopener" href="https://www.discogs.com/release/${esc(String(r.discogs_id))}">Open on Discogs</a>
+      ${r.both ? '' : '<button class="btn" id="frWant">Save to my wantlist</button>'}
+    </div>
+    <p class="hint msg" id="frRecMsg"></p>
+    <p class="hint">Friends only share titles, condition and rarity. Prices, what they paid and their notes stay private to the owner.</p>`;
+}
+async function openFriendRecord(r){
+  frCur = r; frPulled = null;
+  const who = r.owner_username || (($('#vTitle').textContent || '').replace(/^@/, ''));
+  paintFriendRecord(r, null, who);
+  $('#dFR').showModal();
+  try{
+    frPulled = await pull(r.discogs_id);
+    if(frCur === r) paintFriendRecord(r, frPulled.rel, who);
+  }catch(e){
+    if(frCur === r){ paintFriendRecord(r, null, who); const m = $('#frRecMsg'); if(m) m.textContent = 'Could not load the full Discogs details right now.'; }
+  }
+}
+$('#frRecBody').addEventListener('click', async e => {
+  if(e.target.id !== 'frWant' || !frCur) return;
+  const b = e.target, msg = $('#frRecMsg'); b.disabled = true;
+  try{
+    const pulled = frPulled || await pull(frCur.discogs_id);
+    const it = { id: Number(frCur.discogs_id), stats: pulled.stats, edition: {} };
+    fillFromRelease(it, pulled.rel);
+    const st = it.stats || {};
+    const snap = { artist: it.artist, title: it.title, year: it.year, label: it.label, catno: it.catno, cover: it.cover, format: it.format,
+      lowest: st.lowest ?? null, sugg: st.sugg ?? null, have: st.have ?? null, genres: it.genres || [], styles: it.styles || [], saved: Date.now() };
+    const { error } = await sb.from('wants').upsert({ user_id: user.id, discogs_id: it.id, snapshot: snap, share: wantShare() }, { onConflict: 'user_id,discogs_id' });
+    if(error) throw new Error(error.message);
+    sfx('coin'); toast('Saved to your wantlist'); b.textContent = 'On your wantlist';
+  }catch(err){ if(msg) msg.textContent = err.message; b.disabled = false; }
+});
 $('#vChips').addEventListener('click', e => {
   const b = e.target.closest('[data-mode]'); if(!b) return;
   viewMode = b.dataset.mode; paintView();
@@ -2444,7 +2515,7 @@ async function loadNearby(c){
   nearbyCenter = c;
   try{ localStorage.setItem('crate.center', JSON.stringify(c)); }catch{}
   (d.stores || []).forEach(remember);
-  paintStoreList(d.stores || [], d.seedFailed ? 'Could not reach the shop map right now, and nothing is saved for this area yet. Try again later, or add the shop yourself below.' : 'No record shops found near here yet. Add one below.');
+  paintStoreList(d.stores || [], d.seedFailed ? 'Could not reach the shop map right now (' + (d.seedNote || 'no answer') + '), and nothing is saved for this area yet. Try again in a few minutes, or add the shop yourself below.' : 'No record shops found near here yet. Add one below.');
   const m = $('#stoMsg'); if(m) m.textContent = '';
 }
 $('#stoBody').addEventListener('click', async e => {

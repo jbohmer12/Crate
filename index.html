@@ -4,9 +4,11 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Crate</title>
+<meta name="theme-color" content="#1a1c2c">
+<link rel="icon" href="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA4IDgiIHNoYXBlLXJlbmRlcmluZz0iY3Jpc3BFZGdlcyI+PHJlY3Qgd2lkdGg9IjgiIGhlaWdodD0iOCIgZmlsbD0iIzFhMWMyYyIvPjxwYXRoIGQ9Ik0yIDBoMXYxaC0xek0zIDBoMXYxaC0xek00IDBoMXYxaC0xek01IDBoMXYxaC0xek0xIDFoMXYxaC0xek0yIDFoMXYxaC0xek0zIDFoMXYxaC0xek00IDFoMXYxaC0xek01IDFoMXYxaC0xek02IDFoMXYxaC0xek0wIDJoMXYxaC0xek0xIDJoMXYxaC0xek0yIDJoMXYxaC0xek01IDJoMXYxaC0xek02IDJoMXYxaC0xek03IDJoMXYxaC0xek0wIDNoMXYxaC0xek0xIDNoMXYxaC0xek0yIDNoMXYxaC0xek01IDNoMXYxaC0xek02IDNoMXYxaC0xek03IDNoMXYxaC0xek0wIDRoMXYxaC0xek0xIDRoMXYxaC0xek0yIDRoMXYxaC0xek01IDRoMXYxaC0xek02IDRoMXYxaC0xek03IDRoMXYxaC0xek0wIDVoMXYxaC0xek0xIDVoMXYxaC0xek0yIDVoMXYxaC0xek01IDVoMXYxaC0xek02IDVoMXYxaC0xek03IDVoMXYxaC0xek0xIDZoMXYxaC0xek0yIDZoMXYxaC0xek0zIDZoMXYxaC0xek00IDZoMXYxaC0xek01IDZoMXYxaC0xek02IDZoMXYxaC0xek0yIDdoMXYxaC0xek0zIDdoMXYxaC0xek00IDdoMXYxaC0xek01IDdoMXYxaC0xeiIgZmlsbD0iI2ZmY2Q3NSIvPjwvc3ZnPg==">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,600;12..96,800&family=Special+Elite&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Pixelify+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
 <style>
 
@@ -204,6 +206,241 @@ dialog::backdrop{background:rgba(8,12,45,.7)}
 .meter{display:grid;grid-template-columns:repeat(10,1fr);gap:4px;margin-bottom:6px}
 .meter i{height:12px;border-radius:2px;display:block}
 .tierrow{display:flex;justify-content:space-between;padding:6px 0;border-top:2px solid var(--line);font-size:15px}
+.digbar{background:var(--paper);color:var(--ink);border-radius:8px;padding:10px 12px;margin:6px 0 12px;display:flex;align-items:center;justify-content:space-between;gap:10px;font-size:14px}
+.digbar .btn{padding:7px 14px;font-size:14px;flex:none}
+.tiles{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:14px}
+.sheet .tile{display:flex;flex-direction:column;align-items:flex-start;gap:3px;text-align:left;background:#fff;border:2px solid var(--line);border-radius:12px;padding:14px;color:var(--ink);min-height:112px}
+.tile .ti{font-size:26px;line-height:1}
+.tile b{font-size:16px;margin-top:4px}
+.tile small{color:var(--muted);font-size:13px;line-height:1.3}
+.sheet .storerow,.sheet .reqrow{display:flex;justify-content:space-between;align-items:center;gap:12px;width:100%;padding:12px 0;border:0;border-top:2px solid var(--line);background:none;text-align:left;color:var(--ink);font-size:15px}
+.reqrow{justify-content:flex-start !important}
+.reqrow img{width:64px;height:64px;object-fit:cover;border-radius:4px;flex:none;background:var(--line)}
+.badges{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.badge2{border:2px dashed var(--line);border-radius:10px;padding:10px;opacity:.6}
+.badge2.on{border:2px solid var(--blue);background:#eef0ff;opacity:1}
+.badge2 small{display:block;color:var(--muted);font-size:12.5px;margin-top:2px}
+.sheet a{color:var(--blue)}
+
+/* ============================ 8-BIT THEME ============================ */
+:root{
+  --bg:#1a1c2c; --blue:#3b5dc9; --blue-deep:#29366f; --paper:#f4f4f4; --ink:#1a1c2c; --sticker:#ffcd75; --stamp:#b13e53;
+  --muted:#566c86; --line:#94b0c2; --good:#38b764; --lime:#a7f070; --sky:#41a6f6; --cyan:#73eff7; --orange:#ef7d57; --steel:#94b0c2; --slate:#333c57;
+  --sans:'Pixelify Sans','Trebuchet MS',system-ui,sans-serif;
+  --type:'Press Start 2P','Courier New',monospace;
+  --bd:#f4f4f4;
+}
+*,*::before,*::after{border-radius:0 !important}
+html{-webkit-font-smoothing:none}
+body{background-color:var(--bg);font-family:var(--sans);font-size:17px;line-height:1.3;color:var(--paper);
+  background-image:conic-gradient(rgba(255,255,255,.028) 25%,transparent 0 50%,rgba(255,255,255,.028) 0 75%,transparent 0);background-size:32px 32px}
+:focus-visible{outline:4px solid var(--sticker);outline-offset:6px}
+.sheet :focus-visible,.authcard :focus-visible,.empty :focus-visible{outline-color:var(--blue)}
+
+/* pixel outline: a 4px notched ring that doesn't change layout */
+.btn,.gear,.fab,.tools input,.tools select,.sheet input:not([type=checkbox]):not([type=file]),.sheet select,.sheet textarea,.authcard input,.gbtn,
+.fact,.tile,.verdict,.bgbar,.digbar,.chip,.results button,.badge2,.sticker,.stamp,.sleeve,.toast,.badge,dialog,.authcard,.empty{
+  --ring:0 -4px 0 0 var(--bd),0 4px 0 0 var(--bd),-4px 0 0 0 var(--bd),4px 0 0 0 var(--bd);
+  border:0 !important; box-shadow:var(--ring);
+}
+.sheet,.authcard,.empty{--bd:var(--ink)}
+dialog,.authcard,.empty{--bd:var(--sky)}
+.sheet{--bd:var(--ink)}
+
+/* type */
+.brand{font-family:var(--type);font-weight:400;font-size:22px;letter-spacing:0;color:var(--sticker);text-shadow:4px 4px 0 var(--stamp)}
+.brand.big{font-size:34px;line-height:1.3}
+.sheet h2,.empty h2{font-family:var(--type);font-weight:400;font-size:15px;line-height:1.5;letter-spacing:0;margin:0}
+.frh{font-family:var(--type);font-weight:400;font-size:11px;line-height:1.6;margin:30px 0 8px}
+.tagline{font-size:20px;line-height:1.3;margin:14px 0 30px}
+
+/* header */
+header{padding:26px 0 8px}
+.hbtns{gap:18px}
+.gear{width:46px;height:46px;background:var(--blue-deep);color:var(--paper);--bd:var(--steel);display:grid;place-items:center;padding:0;position:relative}
+.gear .spr{width:24px;height:24px}
+.gear:active{transform:translateY(2px)}
+.badge{background:var(--stamp);color:#fff;font-family:var(--type);font-size:9px;min-width:20px;height:20px;top:-10px;right:-10px;--bd:var(--ink);display:grid;place-items:center;padding:0 3px}
+.spr{display:inline-block;width:1.1em;height:1.1em;vertical-align:-.15em}
+.spr.blink{animation:blink 1s steps(1) infinite}
+@keyframes blink{50%{opacity:0}}
+
+/* totals */
+.totals{gap:30px 34px;padding:22px 0 28px}
+.totals .big{font-family:var(--type);font-weight:400;font-size:clamp(24px,8vw,38px);line-height:1.2;letter-spacing:0;color:var(--sticker);text-shadow:4px 4px 0 #000}
+.totals .sub{font-size:16px;opacity:.9;margin-top:12px}
+.totals .stat{font-family:var(--type);font-weight:400;font-size:18px;line-height:1.3}
+.totals .stat small{font-family:var(--sans);font-size:15px;opacity:.9;margin-top:8px}
+.totals .scorebtn{font-family:var(--type);font-weight:400;font-size:18px;line-height:1.3;color:var(--cyan)}
+.totals .scorebtn .of{font-size:10px;opacity:.9}
+.totals .scorebtn small{font-family:var(--sans);font-size:15px;margin-top:8px;color:var(--paper)}
+
+/* search + sort */
+.tools{gap:20px 16px;margin:6px 0 34px}
+.tools input,.tools select{background:var(--blue-deep);color:var(--paper);--bd:var(--steel);padding:13px 14px;font-size:17px}
+.tools select{flex:1 1 0;max-width:none}
+.tools input::placeholder{color:#94b0c2}
+
+/* record grid */
+.grid{gap:44px 28px;padding-top:14px}
+.sleeve{--bd:var(--paper);background:var(--blue-deep)}
+.sleeve img{display:block}
+.sleeve .noart{color:var(--steel);opacity:1}
+.sleeve .noart .spr,.vnoart .spr{width:44%;height:44%}
+.sticker{font-family:var(--type);font-weight:400;font-size:11px;line-height:1;height:34px;min-width:0;padding:0 9px;transform:none;top:-18px;right:-8px;
+  background:var(--sticker);color:var(--ink);--bd:var(--ink);--ring:0 -4px 0 0 var(--ink),0 4px 0 0 var(--ink),-4px 0 0 0 var(--ink),4px 0 0 0 var(--ink);
+  box-shadow:var(--ring),inset 0 -4px 0 rgba(0,0,0,.2)}
+.sticker.sm{font-size:9px;padding:0 7px}
+.sticker.none{font-size:8px;height:30px;padding:0 7px;background:var(--steel)}
+.meta{padding:18px 2px 0}
+.meta .artist{font-family:var(--sans);font-weight:700;font-size:18px;line-height:1.15}
+.meta .title{font-size:16px;opacity:1;margin-top:3px;line-height:1.2;color:#d6e2ee}
+.meta .sub{font-size:14.5px;opacity:.9;margin-top:6px;gap:6px 8px;color:var(--steel)}
+.cond,.tags .tag,.reqrow .tag,.vrow .tag{border:0 !important;box-shadow:0 0 0 2px currentColor;font-size:12.5px;font-weight:600;padding:0 6px;margin:2px 4px 2px 6px;line-height:1.35;background:none}
+.tags .tag,.reqrow .tag,.vrow .tag{box-shadow:0 0 0 2px var(--ink);background:var(--blue);color:#fff;margin-left:4px}
+.tags .tag.trade{background:var(--sticker);color:var(--ink)}
+.owner{font-weight:600}
+.pips{gap:6px;margin-top:14px;font-size:14px}
+.pips i{width:16px;height:10px;background:var(--slate);box-shadow:0 0 0 2px #000}
+.pips span{font-family:var(--type);font-size:9px;font-weight:400;margin-left:8px;line-height:1.4}
+.pips.t0 i.on{background:#ffcd75}.pips.t0 span{color:#ffcd75}
+.pips.t1 i.on{background:#ef7d57}.pips.t1 span{color:#ef7d57}
+.pips.t2 i.on{background:#41a6f6}.pips.t2 span{color:#41a6f6}
+.pips.t3 i.on{background:#a7f070}.pips.t3 span{color:#a7f070}
+.pips.t4 i.on{background:#94b0c2}.pips.t4 span{color:#94b0c2}
+.sheet .pips span{color:var(--ink) !important}
+.stamp{font-family:var(--type);font-size:9px;line-height:1.3;color:var(--stamp);background:var(--paper);--bd:var(--stamp);transform:none;padding:7px 8px;margin:16px 4px 4px;letter-spacing:0}
+
+/* empty state */
+.empty{margin:44px auto;padding:26px 22px;--bd:var(--sky)}
+.empty p{font-size:18px;margin:14px 0}
+.empty a{color:var(--blue)}
+
+/* buttons */
+.btn{font-family:var(--type);font-weight:400;font-size:11px;line-height:1.5;letter-spacing:0;padding:15px 16px;background:var(--blue);color:#fff;--bd:var(--ink);
+  box-shadow:var(--ring),inset 0 -4px 0 rgba(0,0,0,.25)}
+.btn.alt{background:#fff;color:var(--ink)}
+.btn.danger{background:#fff;color:var(--stamp);--bd:var(--stamp)}
+.btn.scan{background:var(--sticker);color:var(--ink)}
+.btn.sm{font-size:9px;padding:11px 12px}
+.btn[disabled]{opacity:.5}
+.btn:active:not([disabled]){transform:translateY(2px);box-shadow:var(--ring)}
+.btns{gap:22px 18px;margin-top:26px}
+.scanrow{gap:18px;margin-top:22px}
+.scanrow .btn{padding:17px 12px;font-size:11px}
+.fab{font-family:var(--type);font-weight:400;font-size:12px;letter-spacing:0;padding:17px 20px;background:var(--sticker);color:var(--ink);--bd:var(--ink);
+  box-shadow:var(--ring),inset 0 -4px 0 rgba(0,0,0,.2),0 12px 0 -2px rgba(0,0,0,.45);bottom:calc(26px + env(safe-area-inset-bottom,0px))}
+.fab:active{transform:translateX(-50%) translateY(2px);box-shadow:var(--ring)}
+.fab::before{content:"";display:inline-block;width:10px;height:10px;background:var(--stamp);margin-right:10px;animation:blink 1.2s steps(1) infinite}
+
+/* windows (dialogs) */
+dialog{background:var(--paper);color:var(--ink);width:min(560px,calc(100vw - 16px));max-height:90vh;margin:auto auto 8px}
+@media(min-width:640px){dialog{margin:auto}}
+dialog::backdrop{background:rgba(26,28,44,.88)}
+.sheet{padding:28px 22px calc(28px + env(safe-area-inset-bottom,0px))}
+.sheet .row{gap:16px}
+.sheet .close{font-family:var(--type);font-size:16px;padding:8px 10px;box-shadow:none !important;background:none;color:var(--ink)}
+.sheet label{font-size:16px;font-weight:600;margin:22px 0 9px}
+.sheet label.pickrow,.sheet label.chk{margin:0}
+.sheet input:not([type=checkbox]):not([type=file]),.sheet select,.sheet textarea,.authcard input{background:#fff;color:var(--ink);font-size:16px;padding:13px 14px;width:100%}
+.sheet input:focus,.sheet select:focus,.sheet textarea:focus,.authcard input:focus{--bd:var(--blue)}
+.sheet .two{gap:18px}
+.hint{font-size:15px;line-height:1.3;color:var(--muted);margin:9px 0 0}
+.sheet .chk{display:flex;gap:12px;align-items:center;font-weight:600;margin:20px 0 0}
+.sheet .chk input{width:20px;height:20px;accent-color:var(--blue);transform:none}
+.spin{width:12px;height:12px;border:0;background:currentColor;animation:blink .7s steps(1) infinite;vertical-align:0;margin-right:8px}
+.spark{height:72px}
+.sheet a,.link{color:var(--blue)}
+
+/* facts */
+.facts{gap:24px 18px;margin-top:26px}
+.fact{background:#fff;padding:13px 14px}
+.fact b{font-family:var(--type);font-weight:400;font-size:14px;line-height:1.5}
+.fact small{font-size:14.5px;line-height:1.25;margin-top:6px}
+.fact.hl{background:var(--sticker);--bd:var(--ink)}
+.fact.hl small{color:#3a3320}
+.scorebig{font-family:var(--type);font-size:40px;font-weight:400;letter-spacing:0;line-height:1.2}
+.scorebig span{font-size:14px;color:var(--muted)}
+.meter{gap:6px;margin:12px 0 10px}
+.meter i{height:14px;box-shadow:0 0 0 2px var(--ink)}
+.dhead{gap:18px}
+.dhead img,.results img,.reqrow img,.vrow img,.crrow img,.stwant img{box-shadow:0 0 0 2px var(--ink);border-radius:0}
+.dhead .a{font-family:var(--sans);font-weight:700;font-size:21px}
+
+/* lists */
+.results{gap:22px;margin-top:22px}
+.results button{background:#fff;padding:10px}
+.results button[aria-pressed=true]{background:var(--sticker)}
+.results small{font-size:14px}
+.addbar{border-top:4px dashed var(--line);margin-top:26px;padding-top:6px}
+.sheet .storerow,.sheet .reqrow,.sheet .cratecard,.sheet .pickrow,.sheet .tierrow,.sheet .frrow,.sheet .crrow,.sheet .vrow,.sheet .stwant{border-top:4px dashed var(--line);border-left:0;border-right:0;border-bottom:0}
+.sheet .tile{background:#fff;padding:16px 14px;min-height:124px;border:0;gap:6px;--bd:var(--ink)}
+.tiles{gap:26px 20px;margin-top:24px}
+.tile .ti{font-family:var(--type);font-size:22px;line-height:1;color:var(--blue);height:32px;display:flex;align-items:center}
+.tile .ti .spr{width:32px;height:32px}
+.tile b{font-family:var(--type);font-weight:400;font-size:10px;line-height:1.6;margin-top:6px}
+.tile small{font-size:14.5px;color:var(--muted)}
+.tile:active{transform:translateY(2px)}
+.verdict{font-size:16px;line-height:1.3;padding:12px 14px;margin-top:20px;background:#fff;--bd:var(--ink)}
+.verdict.good{background:#a7f070}.verdict.fair{background:#ffcd75}.verdict.high{background:#ef7d57}
+.chips{gap:16px;margin:16px 0 8px}
+.chip{font-family:var(--type);font-size:9px;line-height:1.4;padding:11px 12px;background:#fff;color:var(--ink);--bd:var(--ink)}
+.chip.on{background:var(--blue);color:#fff}
+.mini{font-family:var(--type);font-size:8px;line-height:1.4;padding:8px 9px;background:#fff;color:var(--ink);border:0;box-shadow:0 0 0 2px var(--ink);margin:6px 4px 4px 2px}
+.crctl{gap:14px 16px}
+.badges{gap:22px 18px}
+.badge2{background:#fff;padding:12px;--bd:var(--line);opacity:.7}
+.badge2.on{opacity:1;background:#dbe6ff;--bd:var(--blue)}
+.badge2 b{font-family:var(--type);font-size:9px;line-height:1.6;font-weight:400;display:block}
+.badge2 small{font-size:14px}
+.btn.sm,.mini{cursor:pointer}
+
+/* banners and toast */
+.bgbar,.digbar{padding:12px 14px;margin:10px 0 26px;font-size:16px;line-height:1.25;--bd:var(--ink);gap:16px}
+.bgbar{background:var(--sticker);color:var(--ink);font-weight:600}
+.digbar{background:var(--cyan);color:var(--ink)}
+.bgbar .btn,.digbar .btn{padding:11px 12px;font-size:9px}
+.toast{background:var(--ink);color:var(--paper);--bd:var(--paper);padding:13px 16px;font-size:16px;transition:none;bottom:calc(104px + env(safe-area-inset-bottom,0px));max-width:calc(100vw - 48px)}
+
+/* sign in */
+#auth{padding-top:calc(34px + env(safe-area-inset-top,0px))}
+.authcard{background:var(--paper);padding:24px 20px;--bd:var(--sky)}
+.authcard label{font-size:16px;font-weight:600;margin:20px 0 9px}
+.gbtn{font-family:var(--sans);font-weight:700;font-size:17px;padding:14px;background:#fff;--bd:var(--ink)}
+.or{margin:26px 0 0}
+.btn.block{margin-top:24px;padding:17px 12px}
+.switch{margin:22px 0 0;font-size:16px}
+.authcard .hint.msg{font-size:15px;margin-top:14px}
+
+
+/* ---- layout fixes found in screenshots ---- */
+html,body{max-width:100%;overflow-x:hidden}
+.grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+@media(min-width:640px){.grid{grid-template-columns:repeat(3,minmax(0,1fr))}}
+@media(min-width:900px){.grid{grid-template-columns:repeat(4,minmax(0,1fr))}}
+.rec,.meta{min-width:0}
+.pips{flex-wrap:wrap}
+.pips span{flex:0 0 100%;margin:10px 0 0}
+.totals{gap:26px 20px}
+.totals>div:first-child{flex:0 0 100%}
+.totals .stat,.totals .scorebtn{flex:1 1 130px;min-width:0}
+.tools select{font-size:15px;padding-right:8px}
+.tools{flex-wrap:wrap}
+.tools input{flex:1 1 100%}
+@media(min-width:640px){.tools input{flex:2 1 0}}
+.sheet,.facts,.fact,.tiles,.tile,.results,.results li,.results button>span{min-width:0}
+.fact b,.tile b,.meta .artist,.meta .title{overflow-wrap:anywhere}
+
+.fab{white-space:nowrap;width:max-content;max-width:calc(100vw - 40px)}
+.totals{align-items:flex-start}
+.btn.scan{box-shadow:var(--ring),inset 0 -4px 0 rgba(0,0,0,.2)}
+.btn.scan:active:not([disabled]){box-shadow:var(--ring)}
+dialog:focus-visible{outline:none}
+body{font-variant-ligatures:none;font-feature-settings:"liga" 0,"clig" 0}
+.authcard input,.authcard .gbtn,.authcard .btn{--bd:var(--ink)}
+.authcard input:focus{--bd:var(--blue)}
+.rec{align-self:start}
+@media(prefers-reduced-motion:reduce){.spr.blink,.fab::before,.spin{animation:none}}
 </style>
 </head>
 <body>
@@ -212,7 +449,7 @@ dialog::backdrop{background:rgba(8,12,45,.7)}
 <section id="auth" hidden>
   <div class="authwrap">
     <div class="brand big">Crate</div>
-    <p class="tag">Scan a record label. See the pressing, what it’s worth and how rare it is.</p>
+    <p class="tagline">Scan a record label. See the pressing, what it’s worth and how rare it is.</p>
     <div class="authcard">
       <button class="gbtn" id="gBtn" type="button">
         <svg width="18" height="18" viewBox="0 0 48 48" aria-hidden="true"><path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/><path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/><path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"/><path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.15 1.45-4.92 2.3-8.16 2.3-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/></svg>
@@ -241,8 +478,9 @@ dialog::backdrop{background:rgba(8,12,45,.7)}
 <div class="wrap">
   <header>
     <div class="brand">Crate</div>
-    <div class="hbtns"><button class="gear" id="btnStore" aria-label="Record store mode">🏪</button><button class="gear" id="btnCrates" aria-label="Gig crates">📦</button><button class="gear" id="btnFriends" aria-label="Friends">👥<span class="badge" id="frBadge" hidden></span></button><button class="gear" id="btnSettings" aria-label="Account and settings">⚙</button></div>
+    <div class="hbtns"><button class="gear" id="btnDig" aria-label="Dig: shops, passport, mystery crate"><span data-spr="pin"></span></button><button class="gear" id="btnFriends" aria-label="Friends"><span data-spr="people"></span><span class="badge" id="frBadge" hidden></span></button><button class="gear" id="btnSettings" aria-label="Account and settings"><span data-spr="gear"></span></button></div>
   </header>
+  <div class="digbar" id="digbar" hidden></div>
   <div class="bgbar" id="bgbar" hidden></div>
   <section class="totals" id="totals"></section>
   <div class="tools" id="tools">
@@ -335,7 +573,8 @@ dialog::backdrop{background:rgba(8,12,45,.7)}
   <div class="row"><h2>Account</h2><button class="close" data-close aria-label="Close">×</button></div>
   <p style="margin:6px 0 0;font-weight:600;overflow-wrap:anywhere" id="acctEmail"></p>
   <p class="hint" id="acctPlan"></p>
-  <div class="btns" style="margin-top:12px"><button class="btn alt" id="signOut">Sign out</button></div>
+  <label class="chk"><input type="checkbox" id="sfxOn"> Sound effects</label>
+  <div class="btns" style="margin-top:12px"><button class="btn alt" id="signOut">Sign out</button><button class="btn alt" id="impBlocks">Blocked users</button></div>
   <hr style="border:0;border-top:2px solid var(--line);margin:22px 0 4px">
   <div class="btns">
     <button class="btn alt" id="refreshAll">Refresh all prices</button>
@@ -345,7 +584,8 @@ dialog::backdrop{background:rgba(8,12,45,.7)}
     <button class="btn alt" id="impLocal" hidden>Import records saved on this device</button>
   </div>
   <div class="btns">
-    <button class="btn alt" id="impCsv">Import from Discogs (CSV)</button>
+    <button class="btn alt" id="impByName">Import from Discogs username</button>
+    <button class="btn alt" id="impCsv">Import from CSV file</button>
     <button class="btn alt" id="fillMissing">Load missing prices</button>
   </div>
   <input type="file" id="csvFile" accept=".csv,text/csv" hidden>
@@ -358,7 +598,7 @@ dialog::backdrop{background:rgba(8,12,45,.7)}
 
 <!-- Record store mode -->
 <dialog id="dStore"><div class="sheet">
-  <div class="row"><h2>Record store</h2><button class="close" data-close aria-label="Close">×</button></div>
+  <div class="row"><h2>Price check</h2><button class="close" data-close aria-label="Close">×</button></div>
   <p class="hint">Check a record before you buy it: do you own it, what is it worth, how rare is it.</p>
   <div class="scanrow">
     <button class="btn scan" id="stScan">Scan a label</button>
@@ -372,6 +612,7 @@ dialog::backdrop{background:rgba(8,12,45,.7)}
   <ul class="results" id="stResults"></ul>
   <div id="stCard"></div>
   <h3 class="frh">Your wantlist</h3>
+  <label class="chk"><input type="checkbox" id="wantShare" checked> Let friends see when they own something on my wantlist</label>
   <div id="stWants"></div>
 </div></dialog>
 
@@ -385,6 +626,29 @@ dialog::backdrop{background:rgba(8,12,45,.7)}
 </div></dialog>
 <dialog id="dCrate"><div class="sheet" id="crBody"></div></dialog>
 <dialog id="dPick"><div class="sheet" id="pkBody"></div></dialog>
+
+<!-- Import by Discogs username -->
+<dialog id="dImpU"><div class="sheet">
+  <div class="row"><h2>Import from Discogs</h2><button class="close" data-close aria-label="Close">×</button></div>
+  <p class="hint">Type your Discogs username and Crate reads your collection. It has to be public for this to work. You can make it public in your Discogs privacy settings and switch it back after importing.</p>
+  <label for="impUser">Discogs username</label>
+  <input id="impUser" autocapitalize="none" autocomplete="off" spellcheck="false" placeholder="your username">
+  <div class="btns"><button class="btn" id="impGo">Import my collection</button></div>
+  <p class="hint msg" id="impMsg"></p>
+  <p class="hint">Prefer a file? In Settings, choose Import from CSV file.</p>
+</div></dialog>
+
+<!-- Dig hub and everything under it -->
+<dialog id="dDig"><div class="sheet" id="digBody"></div></dialog>
+<dialog id="dStores"><div class="sheet" id="stoBody"></div></dialog>
+<dialog id="dShop"><div class="sheet" id="shopBody"></div></dialog>
+<dialog id="dPass"><div class="sheet" id="passBody"></div></dialog>
+<dialog id="dMyst"><div class="sheet" id="mystBody"></div></dialog>
+<dialog id="dReq"><div class="sheet" id="reqBody"></div></dialog>
+<dialog id="dMatches"><div class="sheet" id="matchBody"></div></dialog>
+<dialog id="dBlocks"><div class="sheet" id="blockBody"></div></dialog>
+<input type="file" id="rqCamIn" accept="image/*" capture="environment" hidden>
+<input type="file" id="rqLibIn" accept="image/*" hidden>
 
 <!-- Collection rarity score -->
 <dialog id="dScore"><div class="sheet" id="scBody"></div></dialog>
@@ -426,10 +690,47 @@ const COND = {
 const SUGG_KEY = { 'M':'Mint (M)', 'NM':'Near Mint (NM or M-)', 'VG+':'Very Good Plus (VG+)', 'VG':'Very Good (VG)', 'G+':'Good Plus (G+)', 'G':'Good (G)', 'F':'Fair (F)', 'P':'Poor (P)' };
 const condOptions = sel => Object.entries(COND).map(([k,v]) => `<option value="${esc(k)}"${k===sel?' selected':''}>${esc(v.label)}</option>`).join('');
 
-function toast(msg){ const t = $('#toast'); t.textContent = msg; t.classList.add('show'); clearTimeout(toast._t); toast._t = setTimeout(() => t.classList.remove('show'), 3200); }
+function toast(msg){ if(/could not|couldn’t|can’t|failed|wrong|too many|rejected|isn’t|not found/i.test(msg)) sfx('err'); const t = $('#toast'); t.textContent = msg; t.classList.add('show'); clearTimeout(toast._t); toast._t = setTimeout(() => t.classList.remove('show'), 3200); }
 const money = n => n == null ? '—' : new Intl.NumberFormat('en-US',{style:'currency',currency:'USD',maximumFractionDigits: n < 100 ? 2 : 0}).format(n);
 const num = n => new Intl.NumberFormat('en-US').format(n ?? 0);
 const cleanName = s => String(s || '').replace(/\s\(\d+\)$/, '');
+
+
+/* ---------- 8-bit sprites and sound ---------- */
+const SPR = {
+  pin: ['..####..', '.######.', '###..###', '###..###', '.######.', '..####..', '...##...', '....#...'],
+  people: ['..####..', '.######.', '##.##.##', '########', '#.####.#', '##....##', '.######.', '..####..'],
+  gear: ['...##...', '.#.##.#.', '.######.', '###..###', '###..###', '.######.', '.#.##.#.', '...##...'],
+  disc: ['..####..', '.######.', '###..###', '###..###', '###..###', '###..###', '.######.', '..####..'],
+  box: ['########', '#......#', '########', '#.####.#', '#.#..#.#', '#.####.#', '#......#', '########'],
+  book: ['.######.', '##....##', '##.##.##', '##....##', '##.##.##', '##....##', '.######.', '........'],
+  question: ['..####..', '.##..##.', '.##..##.', '....##..', '...##...', '...##...', '........', '...##...'],
+  heart: ['.##..##.', '########', '########', '########', '.######.', '..####..', '...##...', '........'],
+  star: ['...##...', '...##...', '########', '.######.', '..####..', '.##..##.', '.#....#.', '........'],
+  note: ['...####.', '...#..#.', '...#....', '...#....', '.###....', '####....', '.##.....', '........']
+};
+function sprite(name, cls){
+  const rows = SPR[name]; if(!rows) return '';
+  let d = ''; rows.forEach((r, y) => { for(let x = 0; x < 8; x++) if(r[x] === '#') d += `M${x} ${y}h1v1h-1z`; });
+  return `<svg class="spr ${cls || ''}" viewBox="0 0 8 8" shape-rendering="crispEdges" fill="currentColor" aria-hidden="true" focusable="false"><path d="${d}"/></svg>`;
+}
+document.querySelectorAll('[data-spr]').forEach(el => { el.innerHTML = sprite(el.dataset.spr); });
+
+let audioCtx = null;
+const sfxOn = () => { try{ return localStorage.getItem('crate.sfx') === '1'; }catch{ return false; } };
+const SFX = { coin: [[988, .07], [1319, .2]], up: [[523, .08], [659, .08], [784, .08], [1047, .2]], err: [[196, .12], [147, .22]] };
+function sfx(name){
+  if(!sfxOn() || !SFX[name]) return;
+  try{
+    audioCtx = audioCtx || new (window.AudioContext || window.webkitAudioContext)();
+    let t = audioCtx.currentTime;
+    SFX[name].forEach(([f, dur]) => {
+      const o = audioCtx.createOscillator(), g = audioCtx.createGain();
+      o.type = 'square'; o.frequency.value = f; g.gain.value = 0.04;
+      o.connect(g); g.connect(audioCtx.destination); o.start(t); o.stop(t + dur); t += dur;
+    });
+  }catch{}
+}
 
 /* ---------- Server calls ---------- */
 async function fn(name, body){
@@ -493,6 +794,7 @@ async function enterApp(u){
     render();
     loadFriends().catch(() => {});
     loadCrates().catch(() => {});
+    loadPassport().catch(() => {}); loadDig(); paintDigBar();
     checkMissing();
     offerLocalImport();
   }catch(e){
@@ -527,7 +829,7 @@ function fromRow(r){
     media: r.media || 'VG+', sleeve: r.sleeve || 'VG+', paid: r.paid == null ? null : +r.paid, notes: r.notes || '',
     edition: { size: r.edition_size || undefined, copy: r.edition_copy || undefined, source: r.edition_source || undefined, manual: !!r.edition_manual },
     matrix: r.matrix || [],
-    hidden: !!r.hidden, forTrade: !!r.for_trade,
+    hidden: !!r.hidden, forTrade: !!r.for_trade, found_store_id: r.found_store_id || null, found_on: r.found_on || null,
     artist: s.artist, title: s.title, year: s.year, label: s.label, catno: s.catno, country: s.country,
     format: s.format, cover: s.cover, coverLg: s.coverLg, genres: s.genres, styles: s.styles, stats: s.stats
   };
@@ -537,7 +839,7 @@ function toRow(it){
   return {
     discogs_id: it.id, media: it.media, sleeve: it.sleeve, paid: it.paid, notes: it.notes || '',
     edition_size: e.size || null, edition_copy: e.copy || null, edition_source: e.source || null, edition_manual: !!e.manual,
-    matrix: it.matrix || [], hidden: !!it.hidden, for_trade: !!it.forTrade,
+    matrix: it.matrix || [], hidden: !!it.hidden, for_trade: !!it.forTrade, found_store_id: it.found_store_id || null, found_on: it.found_on || null,
     snapshot: { artist: it.artist, title: it.title, year: it.year, label: it.label, catno: it.catno, country: it.country,
       format: it.format, cover: it.cover, coverLg: it.coverLg, genres: it.genres, styles: it.styles, stats: it.stats }
   };
@@ -615,7 +917,7 @@ function rarity(it){
 function pips(r){
   if(r.i === 5) return '<div class="pips"><span>Not priced yet</span></div>';
   const on = 5 - r.i;
-  return `<div class="pips" aria-label="${esc(r.name)}">${[0,1,2,3,4].map(n => `<i class="${n < on ? 'on' : ''}"></i>`).join('')}<span>${esc(r.name)}</span></div>`;
+  return `<div class="pips t${r.i}" aria-label="${esc(r.name)}">${[0,1,2,3,4].map(n => `<i class="${n < on ? 'on' : ''}"></i>`).join('')}<span>${esc(r.name)}</span></div>`;
 }
 function stampText(it){
   const e = it.edition || {};
@@ -680,7 +982,7 @@ function render(){
     const price = e ? money(e.v) : 'no price';
     return `<button class="rec" data-uid="${esc(it.uid)}">
       <div class="sleeve">
-        ${it.cover ? art(it) : '<div class="noart">♪</div>'}
+        ${it.cover ? art(it) : '<div class="noart">' + sprite('note') + '</div>'}
         <div class="sticker${e ? (price.length > 5 ? ' sm' : '') : ' none'}">${esc(price)}</div>
       </div>
       <div class="meta">
@@ -696,6 +998,8 @@ function render(){
     <div class="empty">
       <h2>Your crate is empty</h2>
       <p>Tap Add a record, then Scan a record label. Crate finds the pressing on Discogs and tells you what it’s worth and how scarce it is.</p>
+      <p>Already have a Discogs collection?</p>
+      <div class="btns"><button class="btn alt" id="emptyImp">Import from Discogs</button></div>
     </div>`;
 }
 
@@ -713,7 +1017,7 @@ async function decodeImage(file){
   const url = URL.createObjectURL(file);
   try{ return await load(url); } finally { URL.revokeObjectURL(url); }
 }
-async function photoToJpeg(file, max = 1600){
+async function photoToJpeg(file, max = 1600, q = 0.85){
   let img;
   try{ img = await decodeImage(file); }
   catch{ throw new Error('Could not open that photo. On iPhone, set Settings > Camera > Formats > Most Compatible, or pick a JPEG or screenshot instead.'); }
@@ -724,7 +1028,7 @@ async function photoToJpeg(file, max = 1600){
   c.width = Math.round(w * k); c.height = Math.round(h * k);
   c.getContext('2d').drawImage(img, 0, 0, c.width, c.height);
   if(img.close) img.close();
-  return c.toDataURL('image/jpeg', 0.85).split(',')[1];
+  return c.toDataURL('image/jpeg', q).split(',')[1];
 }
 
 /* ---------- Add flow ---------- */
@@ -780,11 +1084,11 @@ async function addPicked(){
       paid: $('#aPaid').value ? +$('#aPaid').value : null,
       notes: '', edition: {}, matrix: lastMatrix || [], stats
     };
-    fillFromRelease(it, rel);
+    fillFromRelease(it, rel); digTag(it);
     await insertItem(it);
     items.push(it); render(); recordHistory(it);
     $('#addbar').hidden = true; picked = null; lastMatrix = null; $('#runRow').hidden = true; $('#results').innerHTML = ''; $('#q').value = ''; $('#aPaid').value = '';
-    $('#scanMsg').textContent = 'Added ' + it.artist + ', ' + it.title + '. Scan the next one, or close this.';
+    $('#scanMsg').textContent = 'Added ' + it.artist + ', ' + it.title + '. Scan the next one, or close this.'; sfx('coin');
     toast('Added ' + it.artist + ' – ' + it.title);
   }catch(e){ toast(e.message); }
   btn.disabled = false; btn.textContent = 'Add to crate';
@@ -952,8 +1256,10 @@ function openDetail(uid){
       <div><label for="ePaid">What you paid</label><input id="ePaid" type="number" inputmode="decimal" min="0" step="0.01" value="${esc(it.paid ?? '')}"></div>
       <div></div>
     </div>
+    <label for="eFound">Found at</label>
+    <select id="eFound">${foundOptions(it)}</select>
     <label for="eCrate">Add to a gig crate</label>
-    <select id="eCrate"><option value="">${crates.length ? 'Choose a crate…' : 'No crates yet. Make one with the 📦 button.'}</option>${crates.map(c => `<option value="${esc(c.id)}">${esc(c.name)}</option>`).join('')}</select>
+    <select id="eCrate"><option value="">${crates.length ? 'Choose a crate…' : 'No crates yet. Make one from the Dig screen.'}</option>${crates.map(c => `<option value="${esc(c.id)}">${esc(c.name)}</option>`).join('')}</select>
     <label class="chk"><input type="checkbox" id="eTrade"${it.forTrade ? ' checked' : ''}> Open to trade</label>
     <label class="chk"><input type="checkbox" id="eHidden"${it.hidden ? ' checked' : ''}> Hide from friends</label>
     <p class="hint">Friends see title, condition and rarity. They never see prices, what you paid, your notes or your etching. Hidden records don’t show up for them at all.</p>
@@ -978,11 +1284,12 @@ function openDetail(uid){
     if(copy > 0) it.edition.copy = copy; else delete it.edition.copy;
     it.paid = $('#ePaid').value === '' ? null : +$('#ePaid').value;
     it.hidden = $('#eHidden').checked; it.forTrade = $('#eTrade').checked;
+    it.found_store_id = $('#eFound').value || null; it.found_on = it.found_store_id ? (it.found_on || todayStr()) : null;
     it.matrix = $('#eMatrix').value.split('\n').map(x => x.trim()).filter(Boolean);
     it.notes = $('#eNotes').value;
     saveItem(it); render(); openDetail(uid);
   };
-  ['#eMedia','#eSleeve','#eSize','#eCopy','#ePaid','#eTrade','#eHidden','#eMatrix','#eNotes'].forEach(sel => $(sel).addEventListener('change', upd));
+  ['#eMedia','#eSleeve','#eSize','#eCopy','#ePaid','#eTrade','#eHidden','#eFound','#eMatrix','#eNotes'].forEach(sel => $(sel).addEventListener('change', upd));
   $('#eRefresh').onclick = async () => {
     const b = $('#eRefresh'); b.innerHTML = '<span class="spin"></span>Refreshing…'; b.disabled = true;
     try{ const { rel, stats } = await pull(it.id); it.stats = stats; fillFromRelease(it, rel); await saveItem(it); recordHistory(it); render(); openDetail(uid); toast('Prices updated'); }
@@ -1045,7 +1352,7 @@ function paintFriends(){
     <h3 class="frh">Friends</h3>
     ${mine.length ? mine.map(f => `<div class="frrow"><button class="frname" data-act="open" data-uid="${esc(f.user_id)}" data-name="${esc(f.username)}">@${esc(f.username)}</button><button class="btn sm alt" data-act="remove" data-id="${esc(f.friendship_id)}">Remove</button></div>`).join('') : '<p class="hint">No friends yet.</p>'}
     ${sent.length ? `<h3 class="frh">Waiting for a reply</h3>${sent.map(f => `<div class="frrow"><b>@${esc(f.username)}</b><button class="btn sm alt" data-act="remove" data-id="${esc(f.friendship_id)}">Cancel</button></div>`).join('')}` : ''}
-    <div class="btns"><button class="btn alt" id="frTrade">Trade board</button></div>`;
+    <div class="btns"><button class="btn alt" id="frTrade">Trade board</button> <button class="btn alt" id="frMatches">Wantlist matches</button></div>`;
 }
 $('#frBody').addEventListener('click', async e => {
   const t = e.target.closest('button'); if(!t) return;
@@ -1058,6 +1365,8 @@ $('#frBody').addEventListener('click', async e => {
       const v = $('#frAdd').value.trim(); if(!v) return;
       await rpc('send_friend_request', { p_username: v });
       await loadFriends(); paintFriends(); toast('Done');
+    }else if(t.id === 'frMatches'){
+      openMatches();
     }else if(t.id === 'frTrade'){
       openTradeBoard();
     }else if(t.dataset.act === 'accept' || t.dataset.act === 'decline'){
@@ -1115,7 +1424,7 @@ function viewRow(r){
   const basis = known ? `Held by ${num(r.have)} Discogs collectors` : 'Rarity unknown';
   const ed = r.edition_size ? `Edition of ${num(r.edition_size)} (${r.edition_source === 'notes' ? 'from Discogs notes' : 'entered by owner'})` : '';
   return `<div class="vrow">
-    ${r.cover ? `<img src="${esc(r.cover)}" alt="" loading="lazy" referrerpolicy="no-referrer">` : '<div class="vnoart">♪</div>'}
+    ${r.cover ? `<img src="${esc(r.cover)}" alt="" loading="lazy" referrerpolicy="no-referrer">` : '<div class="vnoart">' + sprite('note') + '</div>'}
     <div class="vmeta"><b>${esc(r.artist)}</b><div>${esc(r.title)}</div>
       <div class="hint">${esc([r.release_year, r.label].filter(Boolean).join(', '))}${r.media ? `<span class="cond">${esc(r.media)}</span>` : ''}</div>
       ${known ? pips(rar) : ''}
@@ -1217,7 +1526,8 @@ $('#authForm').addEventListener('submit', async e => {
 
 $('#fab').onclick = openAdd;
 $('#btnFriends').onclick = openFriends;
-$('#btnSettings').onclick = () => { $('#acctEmail').textContent = (user && user.email) || ''; paintQuota(); $('#dSettings').showModal(); paintHistory(); };
+$('#btnSettings').onclick = () => { $('#acctEmail').textContent = (user && user.email) || ''; paintQuota(); $('#sfxOn').checked = sfxOn(); $('#dSettings').showModal(); paintHistory(); };
+$('#sfxOn').addEventListener('change', e => { try{ localStorage.setItem('crate.sfx', e.target.checked ? '1' : '0'); }catch{} if(e.target.checked) sfx('coin'); });
 $('#signOut').onclick = async () => { $('#dSettings').close(); await sb.auth.signOut(); };
 $('#go').onclick = search;
 $('#q').addEventListener('keydown', e => { if(e.key === 'Enter') search(); });
@@ -1416,10 +1726,62 @@ async function importCsv(file){
   fillMissing(); /* fills in prices, rarity and covers in the background */
 }
 
+/* ---------- Import by Discogs username ---------- */
+async function importByUsername(name){
+  const all = []; let page = 1, pages = 1;
+  try{
+    do{
+      paintBg(`Reading your Discogs collection: page ${page} of ${pages}`);
+      const d = await fn('discogs', { action: 'collection', username: name, page });
+      pages = (d.pagination && d.pagination.pages) || 1;
+      all.push(...(d.items || []));
+      page++;
+      if(page <= pages) await sleep(1100);
+    }while(page <= pages);
+  }catch(e){ checkMissing(); throw e; }
+  const vinyl = all.filter(x => !(x.formats && x.formats.length) || x.formats.some(f => /vinyl/i.test(f)));
+  const skipped = all.length - vinyl.length;
+  const existing = {}; items.forEach(i => { const k = Number(i.id); existing[k] = (existing[k] || 0) + 1; });
+  const seen = {}, out = []; let dupes = 0;
+  for(const x of vinyl){
+    const id = Number(x.id); if(!id) continue;
+    seen[id] = (seen[id] || 0) + 1;
+    if(seen[id] <= (existing[id] || 0)){ dupes++; continue; } /* keeps extra copies, skips ones you already have */
+    out.push({
+      id, media: COND_FROM[String(x.media || '').toLowerCase()] || 'VG+', sleeve: COND_FROM[String(x.sleeve || '').toLowerCase()] || 'VG+',
+      paid: null, notes: x.notes || '', edition: {}, matrix: [],
+      artist: x.artist || '', title: x.title || '', year: x.year || undefined, label: x.label || '', catno: x.catno || '', format: x.format || '',
+      genres: x.genres || [], styles: x.styles || []
+    });
+  }
+  if(!out.length){ checkMissing(); toast(`Nothing new to import. ${dupes} already in your crate${skipped ? `, ${skipped} not vinyl` : ''}.`); return; }
+  paintBg(`Importing ${out.length} records…`);
+  let added = 0;
+  for(let i = 0; i < out.length; i += 100){
+    const chunk = out.slice(i, i + 100);
+    const { data, error } = await sb.from('records').insert(chunk.map(toRow)).select('id,added_at');
+    if(error){ checkMissing(); throw new Error(error.message); }
+    data.forEach((r, k) => { chunk[k].uid = r.id; chunk[k].added = new Date(r.added_at).getTime(); items.push(chunk[k]); });
+    added += data.length; render();
+  }
+  toast(`Imported ${added} record${added === 1 ? '' : 's'}${dupes ? `, ${dupes} already there` : ''}${skipped ? `, ${skipped} not vinyl skipped` : ''}.`);
+  fillMissing(); /* prices, rarity and covers load in the background */
+}
+$('#impByName').onclick = () => { $('#dSettings').close(); $('#impMsg').textContent = ''; $('#dImpU').showModal(); };
+$('#emptyHost').addEventListener('click', e => { if(e.target.id === 'emptyImp'){ $('#impMsg').textContent = ''; $('#dImpU').showModal(); } });
+$('#impGo').onclick = async () => {
+  const name = $('#impUser').value.trim().replace(/^@/, ''); const msg = $('#impMsg'); const btn = $('#impGo');
+  if(!name){ msg.textContent = 'Type your Discogs username.'; return; }
+  btn.disabled = true; msg.innerHTML = '<span class="spin"></span>Reading your collection…';
+  try{ $('#dImpU').close(); await importByUsername(name); }
+  catch(e){ $('#dImpU').showModal(); msg.textContent = e.message; }
+  btn.disabled = false;
+};
+
 /* ---------- Record store mode + wantlist ---------- */
 let storeRes = [], storeCur = null, storeCond = 'VG+', storeShop = '', wants = [];
 function openStore(){
-  $('#dStore').showModal();
+  $('#dStore').showModal(); $('#wantShare').checked = wantShare();
   paintWants(); loadWants();
 }
 async function loadWants(){
@@ -1552,13 +1914,14 @@ $('#stCard').addEventListener('click', async e => {
     if(b.id === 'stAdd'){
       b.disabled = true;
       const it = { ...storeCur, sleeve: 'VG+', media: storeCond, paid: storeShop ? +storeShop : null, notes: '', matrix: [], added: Date.now() };
+      digTag(it);
       await insertItem(it); items.push(it); render(); recordHistory(it);
-      toast('Added ' + it.artist + ' – ' + it.title); paintStoreCard();
+      toast('Added ' + it.artist + ' – ' + it.title); sfx('coin'); paintStoreCard();
     }else if(b.id === 'stWant'){
       const it = storeCur, st = it.stats || {};
       const snap = { artist: it.artist, title: it.title, year: it.year, label: it.label, catno: it.catno, cover: it.cover, format: it.format,
-        lowest: st.lowest ?? null, sugg: st.sugg ?? null, have: st.have ?? null, saved: Date.now() };
-      const { error } = await sb.from('wants').upsert({ user_id: user.id, discogs_id: it.id, snapshot: snap }, { onConflict: 'user_id,discogs_id' });
+        lowest: st.lowest ?? null, sugg: st.sugg ?? null, have: st.have ?? null, genres: it.genres || [], styles: it.styles || [], saved: Date.now() };
+      const { error } = await sb.from('wants').upsert({ user_id: user.id, discogs_id: it.id, snapshot: snap, share: wantShare() }, { onConflict: 'user_id,discogs_id' });
       if(error) throw new Error(error.message);
       toast('Saved to your wantlist'); await loadWants();
     }
@@ -1610,7 +1973,7 @@ function paintCrate(){
     const isRisky = e && e.v >= limit;
     total += e ? e.v : 0; if(isRisky) risky++; if(x.packed) packed++; if(x.returned) back++;
     return `<div class="crrow">
-      ${rec.cover ? `<img src="${esc(rec.cover)}" alt="" loading="lazy" referrerpolicy="no-referrer">` : '<div class="vnoart">♪</div>'}
+      ${rec.cover ? `<img src="${esc(rec.cover)}" alt="" loading="lazy" referrerpolicy="no-referrer">` : '<div class="vnoart">' + sprite('note') + '</div>'}
       <div class="vmeta"><b>${esc(rec.artist)}</b><div>${esc(rec.title)}</div>
         <div class="hint">${esc([rec.year, rec.label].filter(Boolean).join(', '))}<span class="cond">${esc(rec.media)}</span></div>
         ${e ? `<div class="${isRisky ? 'warn' : 'hint'}">${money(e.v)}${isRisky ? ' Valuable. Think about leaving it home.' : ''}</div>` : ''}
@@ -1778,43 +2141,55 @@ function fitText(g, text, maxW, size, weight, family){
   return t + '…';
 }
 async function drawCard(it){
-  try{ await Promise.all([document.fonts.load('800 64px "Bricolage Grotesque"'), document.fonts.load('400 34px "Special Elite"')]); }catch{}
-  const cv = $('#cardCv'), g = cv.getContext('2d'), W = 1080, H = 1350, SANS = '"Bricolage Grotesque", system-ui, sans-serif', TYPE = '"Special Elite", "Courier New", monospace';
+  try{ await Promise.all([document.fonts.load('40px "Press Start 2P"'), document.fonts.load('700 40px "Pixelify Sans"'), document.fonts.load('400 40px "Pixelify Sans"')]); }catch{}
+  const cv = $('#cardCv'), g = cv.getContext('2d'), W = 1080, H = 1350;
+  const SANS = '"Pixelify Sans", system-ui, sans-serif', TYPE = '"Press Start 2P", "Courier New", monospace';
   const r = rarity(it), s = it.stats || {}, ed = it.edition || {};
-  g.fillStyle = '#1c2b8f'; g.fillRect(0, 0, W, H);
+  const TIER = ['#ffcd75', '#ef7d57', '#41a6f6', '#a7f070', '#94b0c2'], col = TIER[r.i] || '#94b0c2';
+  g.imageSmoothingEnabled = false;
+  g.fillStyle = '#1a1c2c'; g.fillRect(0, 0, W, H);
+  g.fillStyle = 'rgba(255,255,255,.04)';
+  for(let yy = 0; yy < H; yy += 32) for(let xx = (yy / 32) % 2 ? 32 : 0; xx < W; xx += 64) g.fillRect(xx, yy, 32, 32);
+  const ring = (x, y, w, h2, c, t = 12) => { g.fillStyle = c; g.fillRect(x + t, y - t, w - 2 * t, t); g.fillRect(x + t, y + h2, w - 2 * t, t); g.fillRect(x - t, y + t, t, h2 - 2 * t); g.fillRect(x + w, y + t, t, h2 - 2 * t); g.fillRect(x, y, w, h2); };
+  ring(36, 36, W - 72, H - 72, col, 12);
+  g.fillStyle = '#1a1c2c'; g.fillRect(48, 48, W - 96, H - 96);
+  g.fillStyle = 'rgba(255,255,255,.04)';
+  for(let yy = 48; yy < H - 96; yy += 32) for(let xx = 48 + ((yy - 48) / 32 % 2 ? 32 : 0); xx < W - 96; xx += 64) g.fillRect(xx, yy, 32, 32);
   const img = (await loadImg(it.coverLg || it.cover)) || (await loadImg(it.cover));
-  const S = 740, x = (W - S) / 2, y = 80;
-  g.save(); g.shadowColor = 'rgba(0,0,0,.45)'; g.shadowBlur = 40; g.shadowOffsetY = 18; g.fillStyle = '#121c63'; g.fillRect(x, y, S, S); g.restore();
+  const N = 64, S = 768, x = (W - S) / 2, y = 104;
+  const small = document.createElement('canvas'); small.width = small.height = N;
+  const sg = small.getContext('2d');
   if(img){
-    const m = Math.min(img.width, img.height);
-    g.drawImage(img, (img.width - m) / 2, (img.height - m) / 2, m, m, x, y, S, S);
+    const m = Math.min(img.width, img.height); sg.imageSmoothingEnabled = true;
+    sg.drawImage(img, (img.width - m) / 2, (img.height - m) / 2, m, m, 0, 0, N, N);
   }else{
-    g.fillStyle = '#0d0f1a'; g.beginPath(); g.arc(W / 2, y + S / 2, S * 0.47, 0, Math.PI * 2); g.fill();
-    g.strokeStyle = 'rgba(255,255,255,.08)'; g.lineWidth = 3;
-    for(let k = 1; k <= 6; k++){ g.beginPath(); g.arc(W / 2, y + S / 2, S * (0.22 + k * 0.04), 0, Math.PI * 2); g.stroke(); }
-    g.fillStyle = '#ffd23f'; g.beginPath(); g.arc(W / 2, y + S / 2, S * 0.17, 0, Math.PI * 2); g.fill();
-    g.fillStyle = '#0d0f1a'; g.beginPath(); g.arc(W / 2, y + S / 2, S * 0.018, 0, Math.PI * 2); g.fill();
+    sg.fillStyle = '#29366f'; sg.fillRect(0, 0, N, N);
+    sg.fillStyle = '#0d0f1a'; sg.beginPath(); sg.arc(32, 32, 29, 0, Math.PI * 2); sg.fill();
+    sg.fillStyle = col; sg.beginPath(); sg.arc(32, 32, 11, 0, Math.PI * 2); sg.fill();
+    sg.fillStyle = '#0d0f1a'; sg.fillRect(31, 31, 2, 2);
   }
-  const L = 90, MAXW = W - 2 * L;
-  g.textBaseline = 'alphabetic'; g.fillStyle = '#f6f5f0';
-  g.fillText(fitText(g, it.artist || '', MAXW, 62, 800, SANS), L, 920);
-  g.globalAlpha = 0.92; g.fillText(fitText(g, it.title || '', MAXW, 42, 400, SANS), L, 976); g.globalAlpha = 1;
+  ring(x, y, S, S, '#f4f4f4', 12);
+  g.imageSmoothingEnabled = false; g.drawImage(small, 0, 0, N, N, x, y, S, S);
+  const L = 96, MAXW = W - 2 * L;
+  g.textBaseline = 'alphabetic'; g.fillStyle = '#f4f4f4';
+  g.fillText(fitText(g, it.artist || '', MAXW, 56, 700, SANS), L, 968);
+  g.fillStyle = '#d6e2ee'; g.fillText(fitText(g, it.title || '', MAXW, 40, 400, SANS), L, 1020);
   const on = 5 - r.i;
-  for(let k = 0; k < 5; k++){ g.fillStyle = k < on ? '#ffd23f' : 'rgba(246,245,240,.25)'; g.fillRect(L + k * 78, 1022, 66, 18); }
-  g.fillStyle = '#ffd23f'; g.font = `800 92px ${SANS}`; g.fillText(r.name, L, 1136);
-  g.fillStyle = '#f6f5f0'; g.font = `400 36px ${SANS}`;
-  g.fillText(fitText(g, `Held by ${num(s.have)} Discogs collectors`, MAXW, 36, 400, SANS), L, 1190);
+  for(let k = 0; k < 5; k++){ g.fillStyle = '#000'; g.fillRect(L + k * 84 - 4, 1056 - 4, 76, 36); g.fillStyle = k < on ? col : '#333c57'; g.fillRect(L + k * 84, 1056, 68, 28); }
+  g.fillStyle = '#000'; g.font = `32px ${TYPE}`; g.fillText(r.name.toUpperCase(), L + 4, 1152 + 4);
+  g.fillStyle = col; g.fillText(r.name.toUpperCase(), L, 1152);
+  g.fillStyle = '#f4f4f4'; g.font = `400 34px ${SANS}`;
+  g.fillText(fitText(g, `Held by ${num(s.have)} Discogs collectors`, MAXW, 34, 400, SANS), L, 1206);
   if(ed.size){
-    const label = ed.copy ? `${ed.copy}/${ed.size}` : `Edition of ${num(ed.size)}`;
+    const label = ed.copy ? `${ed.copy}/${ed.size}` : `EDITION OF ${num(ed.size)}`;
     const src = ed.source === 'notes' ? 'from Discogs notes' : 'entered by the owner';
-    g.font = `400 34px ${TYPE}`;
+    g.font = `20px ${TYPE}`;
     const tw = g.measureText(label).width;
-    g.fillStyle = '#f6f5f0'; g.fillRect(L, 1212, tw + 40, 56);
-    g.strokeStyle = '#d92d1c'; g.lineWidth = 4; g.strokeRect(L, 1212, tw + 40, 56);
-    g.fillStyle = '#d92d1c'; g.fillText(label, L + 20, 1252);
-    g.fillStyle = '#f6f5f0'; g.font = `400 28px ${SANS}`; g.fillText(src, L + tw + 62, 1250);
+    ring(L, 1230, tw + 36, 52, '#b13e53', 6); g.fillStyle = '#f4f4f4'; g.fillRect(L, 1230, tw + 36, 52);
+    g.fillStyle = '#b13e53'; g.fillText(label, L + 18, 1266);
+    g.fillStyle = '#d6e2ee'; g.font = `400 28px ${SANS}`; g.fillText(src, L + tw + 62, 1264);
   }
-  g.fillStyle = 'rgba(246,245,240,.7)'; g.font = `800 30px ${SANS}`; g.fillText('Crate', L, 1316);
+  g.fillStyle = '#ffcd75'; g.font = `24px ${TYPE}`; g.fillText('CRATE', W - L - g.measureText('CRATE').width, 1286);
 }
 async function openCard(it){
   if(!it.stats || it.stats.have == null){ toast('Tap Refresh price first so Crate can check the rarity.'); return; }
@@ -1836,8 +2211,6 @@ $('#cardShare').onclick = shareCard;
 $('#cardSave').onclick = saveCard;
 
 /* ---------- Wiring for the feature pack ---------- */
-$('#btnStore').onclick = openStore;
-$('#btnCrates').onclick = openCrates;
 $('#stScan').onclick = () => $('#stCam').click();
 $('#stPick').onclick = () => $('#stLib').click();
 ['#stCam', '#stLib'].forEach(id => $(id).addEventListener('change', e => { const f = e.target.files[0]; e.target.value = ''; storePhoto(f); }));
@@ -1851,6 +2224,484 @@ $('#csvFile').addEventListener('change', async e => {
 });
 $('#fillMissing').onclick = () => { $('#dSettings').close(); fillMissing(); };
 
+
+/* ====================== Dig: shops, check-ins, passport, mystery crate ====================== */
+let storeCache = {}, myCheckins = [], curDig = null, nearbyCenter = null, shopCur = null;
+const DIG_KEY = 'crate.dig.v1', DIG_HOURS = 8;
+const b64safe = s => String(s || '').replace(/[^A-Za-z0-9+/=]/g, '');
+const safeUrl = u => (/^https?:\/\//i.test(u || '') ? String(u) : '');
+const kmText = k => ((navigator.language || '').toLowerCase() === 'en-us' ? (k * 0.621).toFixed(1) + ' mi' : k.toFixed(1) + ' km');
+const okCenter = c => c && Number.isFinite(c.lat) && Number.isFinite(c.lng);
+function ago(ts){
+  const m = Math.max(0, Math.round((Date.now() - new Date(ts).getTime()) / 60000));
+  if(m < 2) return 'just now'; if(m < 60) return m + ' min ago';
+  const h = Math.round(m / 60); if(h < 24) return h + ' h ago';
+  const d = Math.round(h / 24); return d + ' day' + (d === 1 ? '' : 's') + ' ago';
+}
+function remember(s){ if(s && s.id) storeCache[s.id] = { ...(storeCache[s.id] || {}), ...s }; }
+const shopLine = s => [s.address, s.city].filter(Boolean).join(', ');
+
+/* ---------- Current dig (tags new finds with where you found them) ---------- */
+function loadDig(){
+  try{ const d = JSON.parse(localStorage.getItem(DIG_KEY) || 'null'); curDig = d && d.until > Date.now() && user && d.userId === user.id ? d : null; }
+  catch{ curDig = null; }
+}
+function saveDig(){ try{ if(curDig) localStorage.setItem(DIG_KEY, JSON.stringify(curDig)); else localStorage.removeItem(DIG_KEY); }catch{} }
+const digActive = () => !!(curDig && curDig.until > Date.now());
+function digTag(it){ if(digActive()){ it.found_store_id = curDig.store.id; it.found_on = todayStr(); } }
+function paintDigBar(){
+  const b = $('#digbar');
+  if(!digActive()){ b.hidden = true; return; }
+  b.hidden = false;
+  b.innerHTML = `<span>${sprite('pin', 'blink')} Digging at <b>${esc(curDig.store.name)}</b>. New records get tagged “found here”.</span><button class="btn" id="digEnd">End dig</button>`;
+}
+function endDig(){ curDig = null; saveDig(); paintDigBar(); if($('#dDig').open) paintDig(); toast('Dig ended'); }
+$('#digbar').addEventListener('click', e => { if(e.target.id === 'digEnd') endDig(); });
+
+async function loadPassport(){
+  const { data, error } = await sb.from('checkins')
+    .select('id,created_at,note,store:stores(id,name,address,city,country,lat,lng,website,blurb)')
+    .order('created_at', { ascending: false }).limit(500);
+  if(error) throw new Error(error.message);
+  myCheckins = Array.isArray(data) ? data : [];
+  myCheckins.forEach(c => remember(c.store));
+  const need = [...new Set(items.map(i => i.found_store_id).filter(id => id && !storeCache[id]))];
+  if(need.length){
+    const r = await sb.from('stores').select('id,name,address,city,country,lat,lng,website,blurb').in('id', need);
+    (Array.isArray(r.data) ? r.data : []).forEach(remember);
+  }
+}
+function foundOptions(it){
+  const seen = new Map();
+  myCheckins.forEach(c => { if(c.store && !seen.has(c.store.id)) seen.set(c.store.id, c.store); });
+  if(it.found_store_id && storeCache[it.found_store_id]) seen.set(it.found_store_id, storeCache[it.found_store_id]);
+  let html = '<option value="">Not tagged</option>' + [...seen.values()].map(s =>
+    `<option value="${esc(s.id)}"${s.id === it.found_store_id ? ' selected' : ''}>${esc(s.name)}${s.city ? ', ' + esc(s.city) : ''}</option>`).join('');
+  if(it.found_store_id && !seen.has(it.found_store_id)) html += `<option value="${esc(it.found_store_id)}" selected>A shop you tagged</option>`;
+  return html;
+}
+
+/* ---------- Dig hub ---------- */
+function digStats(){
+  const by = {};
+  myCheckins.forEach(c => {
+    if(!c.store) return;
+    const k = c.store.id, x = by[k] || (by[k] = { store: c.store, visits: 0, first: c.created_at, last: c.created_at });
+    x.visits++; if(c.created_at < x.first) x.first = c.created_at; if(c.created_at > x.last) x.last = c.created_at;
+  });
+  const list = Object.values(by).sort((a, b) => String(b.last).localeCompare(String(a.last)));
+  const cities = new Set(list.map(x => (x.store.city || '').trim().toLowerCase() || `~${Number(x.store.lat).toFixed(1)},${Number(x.store.lng).toFixed(1)}`));
+  const found = items.filter(i => i.found_store_id).length;
+  const badges = [
+    ['First dig', 'Check in at a shop', list.length >= 1],
+    ['Shop hopper', 'Check in at 5 different shops', list.length >= 5],
+    ['Road trip', 'Dig in 3 different cities', cities.size >= 3],
+    ['Regular', 'Check in 5 times at one shop', list.some(x => x.visits >= 5)],
+    ['Tagger', 'Tag 10 records with where you found them', found >= 10]
+  ];
+  return { list, cities: cities.size, found, badges, total: myCheckins.length };
+}
+function paintDig(){
+  const s = digStats();
+  $('#digBody').innerHTML = `
+    <div class="row"><h2>Dig</h2><button class="close" data-close aria-label="Close">×</button></div>
+    ${digActive()
+      ? `<div class="verdict fair">${sprite('pin')} Digging at ${esc(curDig.store.name)}. <button class="link" id="digEnd2">End dig</button></div>`
+      : '<p class="hint">Check in at a shop when you start digging. Records you add are tagged with where you found them.</p>'}
+    <div class="tiles">
+      <button class="tile" data-go="stores"><span class="ti">${sprite('pin')}</span><b>Check in</b><small>Find record shops near you</small></button>
+      <button class="tile" data-go="passport"><span class="ti">${sprite('book')}</span><b>Passport</b><small>${s.list.length} shop${s.list.length === 1 ? '' : 's'}, ${s.cities} cit${s.cities === 1 ? 'y' : 'ies'}</small></button>
+      <button class="tile" data-go="myst"><span class="ti">${sprite('question')}</span><b>Mystery crate</b><small>Get help identifying a record</small></button>
+      <button class="tile" data-go="price"><span class="ti">$</span><b>Price check</b><small>Before you buy</small></button>
+      <button class="tile" data-go="crates"><span class="ti">${sprite('box')}</span><b>Gig crates</b><small>Plan what goes in the bag</small></button>
+      <button class="tile" data-go="matches"><span class="ti">${sprite('heart')}</span><b>Matches</b><small id="matchSub">Friends who have what you want</small></button>
+    </div>`;
+}
+async function openDig(){
+  paintDig(); $('#dDig').showModal();
+  try{
+    const m = (await rpc('get_matches')) || [];
+    const el = $('#matchSub'); if(el) el.textContent = m.length ? `${m.length} match${m.length === 1 ? '' : 'es'} with friends` : 'Friends who have what you want';
+  }catch{}
+}
+$('#digBody').addEventListener('click', e => {
+  if(e.target.id === 'digEnd2'){ endDig(); return; }
+  const t = e.target.closest('[data-go]'); if(!t) return;
+  ({ stores: openStores, passport: openPassport, myst: () => openMyst(), price: openStore, crates: openCrates, matches: openMatches })[t.dataset.go]();
+});
+
+/* ---------- Find shops and check in ---------- */
+function getPosition(){
+  return new Promise((res, rej) => {
+    if(!navigator.geolocation) return rej(new Error('This browser can’t share your location. Search a city instead.'));
+    navigator.geolocation.getCurrentPosition(p => res({ lat: p.coords.latitude, lng: p.coords.longitude }),
+      () => rej(new Error('Location is off. Search a city instead.')), { timeout: 10000, maximumAge: 600000 });
+  });
+}
+function openStores(){
+  $('#stoBody').innerHTML = `
+    <div class="row"><h2>Check in</h2><button class="close" data-close aria-label="Close">×</button></div>
+    <p class="hint">Find the shop you’re in and check in. Anything you add while digging is tagged with where you found it. Your check-ins are private to you.</p>
+    <div class="scanrow" style="grid-template-columns:1fr"><button class="btn scan" id="stoLoc">Use my location</button></div>
+    <label for="stoCity">Or search a city</label>
+    <div class="row"><input id="stoCity" placeholder="e.g. Berlin" autocomplete="off"><button class="btn" id="stoGo">Search</button></div>
+    <p class="hint msg" id="stoMsg"></p>
+    <div id="stoList"></div>
+    <h3 class="frh">Shop not listed?</h3>
+    <p class="hint">Stand in or near the shop and add it. It’s saved at your current location.</p>
+    <input id="stoName" maxlength="80" placeholder="Shop name" aria-label="Shop name">
+    <input id="stoAddr" maxlength="160" placeholder="Street address (optional)" aria-label="Street address" style="margin-top:8px">
+    <input id="stoCityIn" maxlength="80" placeholder="City" aria-label="City" style="margin-top:8px">
+    <div class="btns"><button class="btn alt" id="stoAdd">Add this shop here</button></div>
+    <p class="hint">Shop data © OpenStreetMap contributors.</p>`;
+  $('#dStores').showModal();
+  let c = null; try{ c = JSON.parse(localStorage.getItem('crate.center') || 'null'); }catch{}
+  if(okCenter(c)) loadNearby(c).catch(() => paintStoreList([], 'Could not load shops. Check your connection and try again.'));
+  else paintStoreList([], 'Tap Use my location, or search a city, to find shops.');
+}
+function paintStoreList(list, note){
+  const box = $('#stoList'); if(!box) return;
+  box.innerHTML = list.length ? list.map(s => `<button class="storerow" data-sid="${esc(s.id)}">
+      <span><b>${esc(s.name)}</b><br><span class="hint">${esc(shopLine(s) || 'No address listed')}${s.claimed ? ', claimed' : ''}</span></span>
+      <span class="hint" style="white-space:nowrap">${s.km != null ? esc(kmText(s.km)) : ''}</span></button>`).join('')
+    : `<p class="hint">${esc(note || 'No shops found.')}</p>`;
+}
+async function loadNearby(c){
+  const msg = $('#stoMsg'); if(msg) msg.innerHTML = '<span class="spin"></span>Looking for record shops…';
+  const d = await fn('stores', { action: 'nearby', lat: c.lat, lng: c.lng });
+  nearbyCenter = c;
+  try{ localStorage.setItem('crate.center', JSON.stringify(c)); }catch{}
+  (d.stores || []).forEach(remember);
+  paintStoreList(d.stores || [], d.seedFailed ? 'Could not reach the shop map right now, and nothing is saved for this area yet. Try again later, or add the shop yourself below.' : 'No record shops found near here yet. Add one below.');
+  const m = $('#stoMsg'); if(m) m.textContent = '';
+}
+$('#stoBody').addEventListener('click', async e => {
+  const row = e.target.closest('[data-sid]'); if(row){ openShop(row.dataset.sid); return; }
+  const b = e.target.closest('button'); if(!b) return;
+  const msg = $('#stoMsg');
+  try{
+    if(b.id === 'stoLoc'){
+      msg.innerHTML = '<span class="spin"></span>Finding you…';
+      await loadNearby(await getPosition());
+    }else if(b.id === 'stoGo'){
+      const q = $('#stoCity').value.trim(); if(q.length < 2) return;
+      msg.innerHTML = '<span class="spin"></span>Searching…';
+      const g = await fn('stores', { action: 'geocode', q });
+      await loadNearby({ lat: g.lat, lng: g.lng });
+    }else if(b.id === 'stoAdd'){
+      const name = $('#stoName').value.trim();
+      if(name.length < 2){ msg.textContent = 'Give the shop a name.'; return; }
+      msg.innerHTML = '<span class="spin"></span>Adding…';
+      const pos = await getPosition();
+      const id = await rpc('add_store', { p_name: name, p_address: $('#stoAddr').value.trim(), p_city: $('#stoCityIn').value.trim(), p_country: '', p_lat: pos.lat, p_lng: pos.lng, p_website: '' });
+      toast('Shop added'); await loadNearby(pos); if(id) openShop(id);
+    }
+  }catch(err){ if(msg) msg.textContent = err.message; }
+});
+
+/* ---------- Shop page ---------- */
+async function openShop(id){
+  const s = storeCache[id]; if(!s) return;
+  shopCur = s; $('#shopBody').innerHTML = spinner('Loading…'); $('#dShop').showModal();
+  const evQ = sb.from('store_events').select('*').eq('store_id', id).gte('starts_at', new Date(Date.now() - 864e5).toISOString()).order('starts_at').limit(10);
+  const [stats, evR, claim] = await Promise.all([
+    rpc('store_stats', { p_store: id }).catch(() => null), evQ.then(r => r, () => ({ data: [] })), rpc('my_claim', { p_store: id }).catch(() => null)
+  ]);
+  const events = Array.isArray(evR && evR.data) ? evR.data : [];
+  let owner = null;
+  if(claim === 'owner') owner = await rpc('store_demand', { p_store: id }).catch(() => null);
+  paintShop(stats, events, claim, owner);
+}
+function paintShop(stats, events, claim, demand){
+  const s = shopCur; if(!s) return;
+  const here = digActive() && curDig.store.id === s.id;
+  const site = safeUrl(s.website);
+  const finds = stats && stats.enough ? stats.finds || [] : [];
+  $('#shopBody').innerHTML = `
+    <div class="row"><h2>${esc(s.name)}</h2><button class="close" data-close aria-label="Close">×</button></div>
+    <p class="hint" style="margin-top:2px">${esc(shopLine(s) || 'No address listed')}</p>
+    ${site ? `<p class="hint"><a href="${esc(site)}" target="_blank" rel="noopener noreferrer">${esc(site.replace(/^https?:\/\//i, '').slice(0, 60))}</a></p>` : ''}
+    ${s.blurb ? `<p style="margin:10px 0 0">${esc(s.blurb)}</p>` : ''}
+    ${claim === 'owner' ? '<p class="hint"><b>You run this page.</b></p>' : (s.claimed ? '<p class="hint">Claimed by the shop</p>' : '')}
+    <h3 class="frh">Check in</h3>
+    ${here ? `<div class="verdict fair">You’re digging here. New finds are tagged. <button class="link" id="shEnd">End dig</button></div>`
+      : `<input id="shNote" maxlength="140" placeholder="Note to yourself (optional)" aria-label="Note"><div class="btns"><button class="btn scan" id="shIn">Check in here</button></div>
+         <p class="hint">Check-ins are private. Nobody sees where you are. This shop only sees counts.</p>`}
+    <h3 class="frh">What’s happening here</h3>
+    ${stats && stats.enough
+      ? `<p class="hint">${num(stats.diggers)} diggers and ${num(stats.checkins)} check-ins in the last 30 days.</p>
+         ${finds.length ? finds.map(f => `<div class="tierrow"><span><b>${esc(f.artist)}</b> ${esc(f.title)}</span><span style="white-space:nowrap">${f.have != null ? num(f.have) + ' owners' : ''}</span></div>`).join('') : '<p class="hint">No finds tagged here yet.</p>'}`
+      : '<p class="hint">Stats and finds appear once 3 different diggers have checked in. Until then nothing is shown, so nobody can be picked out.</p>'}
+    ${events.length ? `<h3 class="frh">Events</h3>${events.map(ev => `<div class="tierrow"><span><b>${esc(ev.title)}</b>${ev.details ? `<br><span class="hint">${esc(ev.details)}</span>` : ''}</span><span style="white-space:nowrap">${esc(fmtDay(ev.starts_at))}</span></div>${claim === 'owner' ? `<button class="mini" data-evdel="${esc(ev.id)}">Remove event</button>` : ''}`).join('')}` : ''}
+    <h3 class="frh">Mystery crate</h3>
+    <div class="btns"><button class="btn alt" id="shMyst">Requests from here</button><button class="btn alt" id="shAsk">Ask for help</button></div>
+    ${claim === 'owner' ? `
+      <h3 class="frh">Manage your page</h3>
+      <label for="shBlurb">About the shop</label><textarea id="shBlurb" maxlength="400">${esc(s.blurb || '')}</textarea>
+      <label for="shSite">Website</label><input id="shSite" maxlength="200" placeholder="https://" value="${esc(s.website || '')}">
+      <div class="btns"><button class="btn" id="shSave">Save</button></div>
+      <label for="evTitle">Add an event</label>
+      <input id="evTitle" maxlength="80" placeholder="e.g. Record fair"><input id="evWhen" type="datetime-local" aria-label="When" style="margin-top:8px"><input id="evDetails" maxlength="300" placeholder="Details (optional)" style="margin-top:8px">
+      <div class="btns"><button class="btn alt" id="evAdd">Add event</button></div>
+      <h3 class="frh">What diggers want</h3>
+      ${demand && demand.styles && demand.styles.length
+        ? demand.styles.map(x => `<div class="tierrow"><span>${esc(x.style)}</span><b>${num(x.diggers)} diggers</b></div>`).join('') + '<p class="hint">Styles appear only when at least 5 different diggers who checked in here want them. You never see who.</p>'
+        : '<p class="hint">Nothing to show yet. Styles appear only when at least 5 different diggers who checked in here want them.</p>'}`
+      : claim === 'pending' ? '<p class="hint" style="margin-top:16px">Your request to claim this page is being reviewed.</p>'
+      : s.claimed ? '' : `<h3 class="frh">Own or work here?</h3>
+         <textarea id="clMsg" maxlength="300" placeholder="Tell us how you’re connected to the shop"></textarea>
+         <div class="btns"><button class="btn alt" id="clGo">Ask to claim this page</button></div>`}
+    <div class="btns" style="margin-top:20px"><button class="mini" id="shReport">Report this shop</button></div>`;
+}
+$('#shopBody').addEventListener('click', async e => {
+  const b = e.target.closest('button'); if(!b || !shopCur) return;
+  const s = shopCur;
+  const again = async () => { const [st, evR, cl] = await Promise.all([rpc('store_stats', { p_store: s.id }).catch(() => null),
+    sb.from('store_events').select('*').eq('store_id', s.id).gte('starts_at', new Date(Date.now() - 864e5).toISOString()).order('starts_at').limit(10).then(r => r, () => ({ data: [] })), rpc('my_claim', { p_store: s.id }).catch(() => null)]);
+    const dm = cl === 'owner' ? await rpc('store_demand', { p_store: s.id }).catch(() => null) : null; paintShop(st, Array.isArray(evR && evR.data) ? evR.data : [], cl, dm); };
+  try{
+    if(b.id === 'shIn'){
+      b.disabled = true;
+      const { error } = await sb.from('checkins').insert({ store_id: s.id, note: ($('#shNote').value || '').trim() });
+      const dupe = error && (error.code === '23505' || /duplicate/i.test(error.message));
+      if(error && !dupe) throw new Error(error.message);
+      curDig = { userId: user.id, store: { id: s.id, name: s.name, city: s.city }, until: Date.now() + DIG_HOURS * 3600000 };
+      saveDig(); paintDigBar(); if($('#dDig').open) paintDig();
+      await loadPassport().catch(() => {});
+      sfx('up'); toast(dupe ? 'You already checked in here today. Dig on.' : 'Checked in at ' + s.name + '. New finds get tagged.');
+      await again();
+    }else if(b.id === 'shEnd'){ endDig(); await again(); }
+    else if(b.id === 'shMyst'){ openMyst({ store: s.id }); }
+    else if(b.id === 'shAsk'){ openNewRequest(s.id); }
+    else if(b.id === 'shSave'){ await rpc('update_store', { p_store: s.id, p_blurb: $('#shBlurb').value, p_website: $('#shSite').value.trim() }); remember({ id: s.id, blurb: $('#shBlurb').value, website: $('#shSite').value.trim() }); shopCur = storeCache[s.id]; toast('Saved'); await again(); }
+    else if(b.id === 'evAdd'){
+      const when = $('#evWhen').value; if(!$('#evTitle').value.trim() || !when){ toast('Add a title and a date.'); return; }
+      await rpc('add_store_event', { p_store: s.id, p_title: $('#evTitle').value, p_details: $('#evDetails').value, p_starts: new Date(when).toISOString() }); toast('Event added'); await again();
+    }else if(b.dataset.evdel){ await rpc('delete_store_event', { p_id: b.dataset.evdel }); await again(); }
+    else if(b.id === 'clGo'){ await rpc('claim_store', { p_store: s.id, p_message: $('#clMsg').value }); toast('Request sent. We’ll review it.'); await again(); }
+    else if(b.id === 'shReport'){ if(confirm('Report this shop listing as wrong or fake?')){ await rpc('report_content', { p_kind: 'store', p_id: s.id, p_reason: 'reported from shop page' }); toast('Thanks. We’ll take a look.'); } }
+  }catch(err){ toast(err.message); b.disabled = false; }
+});
+
+/* ---------- Passport ---------- */
+async function openPassport(){
+  $('#passBody').innerHTML = spinner('Loading…'); $('#dPass').showModal();
+  try{ await loadPassport(); }catch(e){ $('#passBody').innerHTML = `<p class="hint">${esc(e.message)}</p>`; return; }
+  const s = digStats();
+  $('#passBody').innerHTML = `
+    <div class="row"><h2>Passport</h2><button class="close" data-close aria-label="Close">×</button></div>
+    <div class="facts">
+      <div class="fact hl"><b>${s.list.length}</b><small>shop${s.list.length === 1 ? '' : 's'} dug</small></div>
+      <div class="fact"><b>${s.cities}</b><small>cit${s.cities === 1 ? 'y' : 'ies'}</small></div>
+      <div class="fact"><b>${s.total}</b><small>check-ins</small></div>
+      <div class="fact"><b>${s.found}</b><small>records tagged with where you found them</small></div>
+    </div>
+    <h3 class="frh">Badges</h3>
+    <div class="badges">${s.badges.map(([n, d, ok]) => `<div class="badge2${ok ? ' on' : ''}"><b>${ok ? sprite('star') + ' ' : ''}${esc(n)}</b><small>${esc(d)}</small></div>`).join('')}</div>
+    <h3 class="frh">Stamps</h3>
+    ${s.list.length ? s.list.map(x => `<button class="storerow" data-sid="${esc(x.store.id)}"><span><b>${esc(x.store.name)}</b><br><span class="hint">${esc(x.store.city || 'Unknown city')}, first visit ${esc(fmtDay(x.first))}</span></span><span class="hint" style="white-space:nowrap">${x.visits} visit${x.visits === 1 ? '' : 's'}</span></button>`).join('')
+      : '<p class="hint">No stamps yet. Check in at a shop to get your first one.</p>'}
+    <p class="hint">Only you see your passport.</p>`;
+}
+$('#passBody').addEventListener('click', e => { const r = e.target.closest('[data-sid]'); if(r) openShop(r.dataset.sid); });
+
+/* ---------- Mystery crate (ID requests) ---------- */
+let mystMode = 'open', mystStore = null, rqPhoto = null, reqCur = null, anPick = null;
+async function openMyst(opts){
+  mystStore = (opts && opts.store) || null; mystMode = opts && opts.mine ? 'mine' : 'open';
+  $('#dMyst').showModal(); await loadMyst();
+}
+async function loadMyst(){
+  const box = $('#mystBody');
+  box.innerHTML = `<div class="row"><h2>Mystery crate</h2><button class="close" data-close aria-label="Close">×</button></div>
+    <p class="hint">Can’t identify a record? Post a photo and other diggers help. Posts are visible to Crate users, with your username.</p>
+    <div class="chips"><button class="chip${mystMode === 'open' ? ' on' : ''}" data-mode="open">Open requests</button><button class="chip${mystMode === 'mine' ? ' on' : ''}" data-mode="mine">Mine</button></div>
+    ${mystStore ? `<p class="hint">Only from ${esc((storeCache[mystStore] || {}).name || 'this shop')}. <button class="link" id="mystAll">Show all</button></p>` : ''}
+    <div class="btns"><button class="btn scan" id="mystNew">Ask for help</button></div>
+    <div id="mystList">${spinner('Loading…')}</div>`;
+  try{
+    const rows = (await rpc('list_id_requests', { p_store: mystStore, p_mine: mystMode === 'mine', p_limit: 30 })) || [];
+    $('#mystList').innerHTML = rows.length ? rows.map(r => `<button class="reqrow" data-rid="${esc(r.id)}">
+        <img src="data:image/jpeg;base64,${b64safe(r.thumb)}" alt="">
+        <span><b>${esc(r.description || 'Unidentified record')}</b><br><span class="hint">${r.mine ? 'You' : '@' + esc(r.username)}, ${esc(ago(r.created_at))}${r.store_name ? ', ' + esc(r.store_name) : ''}, ${r.answers} answer${r.answers === 1 ? '' : 's'}</span>
+        ${r.status === 'solved' ? '<br><span class="tag">Solved</span>' : ''}</span></button>`).join('')
+      : `<p class="hint">${mystMode === 'mine' ? 'You haven’t asked for help yet.' : 'No open requests right now.'}</p>`;
+  }catch(e){ $('#mystList').innerHTML = `<p class="hint">${esc(e.message)}</p>`; }
+}
+$('#mystBody').addEventListener('click', e => {
+  const m = e.target.closest('[data-mode]'); if(m){ mystMode = m.dataset.mode; loadMyst(); return; }
+  const r = e.target.closest('[data-rid]'); if(r){ openRequest(r.dataset.rid); return; }
+  if(e.target.id === 'mystNew') openNewRequest(mystStore);
+  if(e.target.id === 'mystAll'){ mystStore = null; loadMyst(); }
+});
+
+function openNewRequest(storeId){
+  if(!myUsername){ toast('Pick a username first. Open Friends and choose one.'); return; }
+  rqPhoto = null;
+  const stores = new Map();
+  myCheckins.forEach(c => { if(c.store) stores.set(c.store.id, c.store); });
+  if(storeId && storeCache[storeId]) stores.set(storeId, storeCache[storeId]);
+  const pre = storeId || (digActive() ? curDig.store.id : '');
+  $('#reqBody').innerHTML = `
+    <div class="row"><h2>Ask for help</h2><button class="close" data-close aria-label="Close">×</button></div>
+    <p class="hint">Photograph the label, both sides if you can. Other Crate users will see the photo and your username.</p>
+    <div class="scanrow"><button class="btn scan" id="rqCam">Take a photo</button><button class="btn alt" id="rqLib">Use a photo</button></div>
+    <div id="rqPrev"></div>
+    <label for="rqDesc">What do you know?</label>
+    <textarea id="rqDesc" maxlength="280" placeholder="e.g. White label, 12 inch, plays at 45, found in a dollar bin"></textarea>
+    <label for="rqClues">Etched text in the runout (optional)</label>
+    <input id="rqClues" maxlength="200">
+    <label for="rqStore">Found at</label>
+    <select id="rqStore"><option value="">Not a shop</option>${[...stores.values()].map(s => `<option value="${esc(s.id)}"${s.id === pre ? ' selected' : ''}>${esc(s.name)}</option>`).join('')}</select>
+    <div class="btns"><button class="btn" id="rqPost">Post</button></div>
+    <p class="hint msg" id="rqMsg"></p>`;
+  $('#dReq').showModal();
+}
+async function rqPick(file){
+  if(!file) return;
+  const msg = $('#rqMsg'); if(msg) msg.innerHTML = '<span class="spin"></span>Preparing the photo…';
+  try{
+    let p = await photoToJpeg(file, 900, 0.7);
+    if(p.length > 380000) p = await photoToJpeg(file, 700, 0.6);
+    if(p.length > 400000) throw new Error('That photo is too detailed. Try a closer shot of just the label.');
+    rqPhoto = { photo: p, thumb: await photoToJpeg(file, 120, 0.6) };
+    const prev = $('#rqPrev'); if(prev) prev.innerHTML = `<img src="data:image/jpeg;base64,${b64safe(p)}" alt="Your photo" style="width:100%;border-radius:8px;margin-top:10px">`;
+    if(msg) msg.textContent = '';
+  }catch(e){ if(msg) msg.textContent = e.message; }
+}
+$('#rqCamIn').addEventListener('change', e => { const f = e.target.files[0]; e.target.value = ''; rqPick(f); });
+$('#rqLibIn').addEventListener('change', e => { const f = e.target.files[0]; e.target.value = ''; rqPick(f); });
+
+async function openRequest(id){
+  $('#reqBody').innerHTML = spinner('Loading…'); $('#dReq').showModal();
+  try{
+    const [rows, answers] = await Promise.all([rpc('get_id_request', { p_id: id }), rpc('list_answers', { p_request: id })]);
+    const r = rows && rows[0];
+    if(!r){ $('#reqBody').innerHTML = '<p class="hint">That request is gone.</p>'; return; }
+    reqCur = { r, answers: answers || [] }; anPick = null; paintRequest();
+  }catch(e){ $('#reqBody').innerHTML = `<p class="hint">${esc(e.message)}</p>`; }
+}
+function paintRequest(){
+  const { r, answers } = reqCur;
+  const solved = r.status === 'solved';
+  const acc = answers.find(a => a.accepted);
+  $('#reqBody').innerHTML = `
+    <div class="row"><h2>${solved ? 'Solved' : 'Help identify'}</h2><button class="close" data-close aria-label="Close">×</button></div>
+    <img src="data:image/jpeg;base64,${b64safe(r.photo)}" alt="Record photo" style="width:100%;border-radius:8px;margin-top:10px">
+    <p class="hint">${r.mine ? 'You' : '@' + esc(r.username)}, ${esc(ago(r.created_at))}${r.store_name ? ', found at ' + esc(r.store_name) : ''}</p>
+    ${r.description ? `<p style="margin:6px 0 0">${esc(r.description)}</p>` : ''}
+    ${r.clues ? `<p class="hint">Etched text: ${esc(r.clues)}</p>` : ''}
+    ${solved && acc ? `<div class="verdict good">Identified: ${esc(acc.suggestion || 'a Discogs release')}. <a href="https://www.discogs.com/release/${esc(String(r.solved_discogs_id))}" target="_blank" rel="noopener">Open on Discogs</a></div>
+       ${r.mine ? '<div class="btns"><button class="btn" id="rqAdd">Add to my crate</button></div>' : ''}` : ''}
+    <h3 class="frh">Answers</h3>
+    ${answers.length ? answers.map(a => `<div class="vrow" style="display:block">
+        <b>${a.mine ? 'You' : '@' + esc(a.username)}</b> <span class="hint">${esc(ago(a.created_at))}</span>${a.accepted ? ' <span class="tag">Accepted</span>' : ''}
+        ${a.suggestion ? `<div>${esc(a.suggestion)}${a.discogs_id ? ` <a href="https://www.discogs.com/release/${esc(String(a.discogs_id))}" target="_blank" rel="noopener">Discogs</a>` : ''}</div>` : ''}
+        ${a.comment ? `<div class="hint">${esc(a.comment)}</div>` : ''}
+        <div class="crctl">${r.mine && !solved && a.discogs_id ? `<button class="mini" data-acc="${esc(a.id)}">This is it</button>` : ''}
+          ${!a.mine ? `<button class="mini" data-rep="answer" data-id="${esc(a.id)}">Report</button><button class="mini" data-block="${esc(a.user_id)}">Block</button>` : ''}</div></div>`).join('')
+      : '<p class="hint">No answers yet.</p>'}
+    ${!r.mine && !solved ? `<h3 class="frh">Suggest an answer</h3>
+      <div class="row"><input id="anQ" type="search" placeholder="Search Discogs: artist, title, catalog number"><button class="btn" id="anGo">Search</button></div>
+      <ul class="results" id="anRes"></ul>
+      <p class="hint" id="anPicked"></p>
+      <label for="anComment">Comment (optional)</label><textarea id="anComment" maxlength="280" placeholder="Why you think so"></textarea>
+      <div class="btns"><button class="btn" id="anSend">Send answer</button></div><p class="hint msg" id="anMsg"></p>` : ''}
+    <div class="btns" style="margin-top:20px">
+      ${r.mine ? '<button class="mini" id="rqDel">Delete my request</button>' : `<button class="mini" data-rep="request" data-id="${esc(r.id)}">Report</button><button class="mini" data-block="${esc(r.user_id)}">Block @${esc(r.username)}</button>`}
+    </div>`;
+}
+let anRes = [];
+$('#reqBody').addEventListener('click', async e => {
+  const t = e.target.closest('button'); if(!t) return;
+  const msg = () => $('#anMsg') || $('#rqMsg');
+  try{
+    if(t.id === 'rqCam') $('#rqCamIn').click();
+    else if(t.id === 'rqLib') $('#rqLibIn').click();
+    else if(t.id === 'rqPost'){
+      if(!rqPhoto){ $('#rqMsg').textContent = 'Add a photo first.'; return; }
+      t.disabled = true;
+      const id = await rpc('create_id_request', { p_photo: rqPhoto.photo, p_thumb: rqPhoto.thumb, p_description: $('#rqDesc').value.trim(), p_clues: $('#rqClues').value.trim(), p_store: $('#rqStore').value || null });
+      toast('Posted. Other diggers can see it now.'); $('#dReq').close(); if($('#dMyst').open) { mystMode = 'mine'; loadMyst(); }
+      void id;
+    }else if(t.id === 'anGo'){
+      const q = $('#anQ').value.trim(); if(!q) return;
+      $('#anRes').innerHTML = '<li class="hint"><span class="spin"></span>Searching…</li>';
+      const d = await fn('discogs', { action: 'search', params: { q } }); anRes = d.results || []; anPick = null; $('#anPicked').textContent = '';
+      $('#anRes').innerHTML = anRes.length ? storeResultsHtml(anRes) : '<li class="hint">No results.</li>';
+    }else if(t.dataset.i != null && t.closest('#anRes')){
+      $('#anRes').querySelectorAll('button').forEach(x => x.setAttribute('aria-pressed', 'false')); t.setAttribute('aria-pressed', 'true');
+      const r = anRes[+t.dataset.i]; anPick = { id: Number(r.id), text: [cleanName(r.title), r.year].filter(Boolean).join(' ') };
+      $('#anPicked').textContent = 'Suggesting: ' + anPick.text;
+    }else if(t.id === 'anSend'){
+      const comment = $('#anComment').value.trim();
+      await rpc('answer_id_request', { p_request: reqCur.r.id, p_discogs_id: anPick ? anPick.id : null, p_suggestion: anPick ? anPick.text : '', p_comment: comment });
+      toast('Thanks for helping'); await openRequest(reqCur.r.id);
+    }else if(t.dataset.acc){
+      await rpc('accept_answer', { p_answer: t.dataset.acc }); sfx('up'); toast('Marked as solved'); await openRequest(reqCur.r.id);
+    }else if(t.id === 'rqAdd'){
+      t.disabled = true;
+      const { rel, stats } = await pull(reqCur.r.solved_discogs_id);
+      const it = { id: Number(reqCur.r.solved_discogs_id), added: Date.now(), media: 'VG+', sleeve: 'VG+', paid: null, notes: '', edition: {}, matrix: [], stats };
+      fillFromRelease(it, rel); if(reqCur.r.store_id){ it.found_store_id = reqCur.r.store_id; it.found_on = todayStr(); }
+      await insertItem(it); items.push(it); render(); recordHistory(it); toast('Added to your crate');
+    }else if(t.id === 'rqDel'){
+      if(!confirm('Delete this request?')) return;
+      await rpc('delete_id_request', { p_id: reqCur.r.id }); $('#dReq').close(); if($('#dMyst').open) loadMyst();
+    }else if(t.dataset.rep){
+      if(!confirm('Report this to the Crate team?')) return;
+      await rpc('report_content', { p_kind: t.dataset.rep, p_id: t.dataset.id, p_reason: 'reported from mystery crate' }); toast('Thanks. We’ll take a look.');
+    }else if(t.dataset.block){
+      if(!confirm('Block this person? You won’t see each other’s posts.')) return;
+      await rpc('block_user', { p_user: t.dataset.block }); toast('Blocked'); $('#dReq').close(); if($('#dMyst').open) loadMyst();
+    }
+  }catch(err){ const m = msg(); if(m) m.textContent = err.message; else toast(err.message); if(t.disabled) t.disabled = false; }
+});
+
+/* ---------- Matches with friends ---------- */
+async function openMatches(){
+  $('#matchBody').innerHTML = spinner('Loading…'); $('#dMatches').showModal();
+  try{
+    const rows = (await rpc('get_matches')) || [];
+    const have = rows.filter(r => r.kind === 'they_have'), want = rows.filter(r => r.kind === 'they_want');
+    const row = (r, text) => `<div class="vrow" style="display:block"><b>${esc(r.artist)}</b> ${esc(r.title)}<div class="hint">${esc([r.release_year, r.label].filter(Boolean).join(', '))}${r.media ? `<span class="cond">${esc(r.media)}</span>` : ''}</div>
+      <div class="tags"><span class="owner">@${esc(r.username)}</span><span class="tag">${text}</span>${r.for_trade ? '<span class="tag trade">Open to trade</span>' : ''}</div></div>`;
+    $('#matchBody').innerHTML = `
+      <div class="row"><h2>Matches</h2><button class="close" data-close aria-label="Close">×</button></div>
+      <p class="hint">Only friends are matched, and only on records. Nobody sees prices.</p>
+      <h3 class="frh">Friends who have what you want</h3>
+      ${have.length ? have.map(r => row(r, 'On your wantlist')).join('') : '<p class="hint">None yet. Save records to your wantlist in Price check.</p>'}
+      <h3 class="frh">Friends who want what you have</h3>
+      ${want.length ? want.map(r => row(r, 'You own this')).join('') : '<p class="hint">None yet.</p>'}`;
+  }catch(e){ $('#matchBody').innerHTML = `<p class="hint">${esc(e.message)}</p>`; }
+}
+
+/* ---------- Blocked users ---------- */
+async function openBlocks(){
+  $('#blockBody').innerHTML = spinner('Loading…'); $('#dBlocks').showModal();
+  try{
+    const rows = (await rpc('list_blocks')) || [];
+    $('#blockBody').innerHTML = `<div class="row"><h2>Blocked users</h2><button class="close" data-close aria-label="Close">×</button></div>
+      ${rows.length ? rows.map(r => `<div class="frrow"><b>@${esc(r.username)}</b><button class="btn sm alt" data-unblock="${esc(r.user_id)}">Unblock</button></div>`).join('') : '<p class="hint">You haven’t blocked anyone.</p>'}`;
+  }catch(e){ $('#blockBody').innerHTML = `<p class="hint">${esc(e.message)}</p>`; }
+}
+$('#blockBody').addEventListener('click', async e => {
+  const b = e.target.closest('[data-unblock]'); if(!b) return;
+  try{ await rpc('unblock_user', { p_user: b.dataset.unblock }); openBlocks(); }catch(err){ toast(err.message); }
+});
+
+/* ---------- Wantlist sharing preference ---------- */
+const wantShare = () => { try{ return localStorage.getItem('crate.wantShare') !== '0'; }catch{ return true; } };
+$('#wantShare').addEventListener('change', async e => {
+  try{ localStorage.setItem('crate.wantShare', e.target.checked ? '1' : '0'); }catch{}
+  const { error } = await sb.from('wants').update({ share: e.target.checked }).eq('user_id', user.id);
+  if(error) toast(error.message); else toast(e.target.checked ? 'Friends can see matches' : 'Matches are off');
+});
+
+/* ---------- Wiring ---------- */
+$('#btnDig').onclick = openDig;
+$('#impBlocks').onclick = () => { $('#dSettings').close(); openBlocks(); };
+
 /* ---------- Start ---------- */
 if(!sb){ showAuth('signin'); }
 else{
@@ -1861,7 +2712,7 @@ else{
       if(session && session.user){
         if(authMode !== 'reset' && enteredFor !== session.user.id) enterApp(session.user);
       }else{
-        enteredFor = null; user = null; items = []; friends = []; myUsername = null; crates = []; crateItems = []; wants = [];
+        enteredFor = null; user = null; items = []; friends = []; myUsername = null; crates = []; crateItems = []; wants = []; myCheckins = []; curDig = null; storeCache = {}; $('#digbar').hidden = true;
         showAuth('signin');
       }
     }, 0);

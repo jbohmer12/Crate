@@ -2491,11 +2491,12 @@ function openStores(){
     <p class="hint msg" id="stoMsg"></p>
     <div id="stoList"></div>
     <h3 class="frh">Shop not listed?</h3>
-    <p class="hint">Stand in or near the shop and add it. It’s saved at your current location.</p>
+    <p class="hint">Type the street address and city and Crate places the shop on the map. Leave them empty to save it where you’re standing.</p>
     <input id="stoName" maxlength="80" placeholder="Shop name" aria-label="Shop name">
     <input id="stoAddr" maxlength="160" placeholder="Street address (optional)" aria-label="Street address" style="margin-top:8px">
     <input id="stoCityIn" maxlength="80" placeholder="City" aria-label="City" style="margin-top:8px">
-    <div class="btns"><button class="btn alt" id="stoAdd">Add this shop here</button></div>
+    <div class="btns"><button class="btn alt" id="stoAdd">Add this shop</button></div>
+    <p class="hint msg" id="stoAddMsg" role="status"></p>
     <p class="hint">Shop data © OpenStreetMap contributors.</p>`;
   $('#dStores').showModal();
   let c = null; try{ c = JSON.parse(localStorage.getItem('crate.center') || 'null'); }catch{}
@@ -2532,12 +2533,29 @@ $('#stoBody').addEventListener('click', async e => {
       const g = await fn('stores', { action: 'geocode', q });
       await loadNearby({ lat: g.lat, lng: g.lng });
     }else if(b.id === 'stoAdd'){
-      const name = $('#stoName').value.trim();
-      if(name.length < 2){ msg.textContent = 'Give the shop a name.'; return; }
-      msg.innerHTML = '<span class="spin"></span>Adding…';
-      const pos = await getPosition();
-      const id = await rpc('add_store', { p_name: name, p_address: $('#stoAddr').value.trim(), p_city: $('#stoCityIn').value.trim(), p_country: '', p_lat: pos.lat, p_lng: pos.lng, p_website: '' });
-      toast('Shop added'); await loadNearby(pos); if(id) openShop(id);
+      const name = $('#stoName').value.trim(), addr = $('#stoAddr').value.trim(), city = $('#stoCityIn').value.trim();
+      const am = $('#stoAddMsg'), say = t => { if(am) am.innerHTML = t; };
+      if(name.length < 2){ say('Give the shop a name.'); return; }
+      b.disabled = true; b.innerHTML = '<span class="spin"></span>Adding…';
+      try{
+        let pos, where;
+        if(addr && city){
+          say('<span class="spin"></span>Finding the address on the map…');
+          const g = await fn('stores', { action: 'geocode', q: `${addr}, ${city}` });
+          pos = { lat: g.lat, lng: g.lng }; where = g.label;
+        }else{
+          say('<span class="spin"></span>Getting your location…');
+          pos = await getPosition(); where = 'where you are';
+        }
+        say('<span class="spin"></span>Saving the shop…');
+        const id = await rpc('add_store', { p_name: name, p_address: addr, p_city: city, p_country: '', p_lat: pos.lat, p_lng: pos.lng, p_website: '' });
+        remember({ id, name, address: addr, city, country: '', lat: pos.lat, lng: pos.lng, website: '', blurb: '', claimed: false });
+        sfx('coin'); toast('Added ' + name + '. Placed at ' + where + '.');
+        ['#stoName', '#stoAddr', '#stoCityIn'].forEach(s => { $(s).value = ''; });
+        say('Added. Opening its page…');
+        openShop(id); loadNearby(pos).catch(() => {});
+      }catch(err){ say(esc(err.message)); }
+      finally{ b.disabled = false; b.textContent = 'Add this shop'; }
     }
   }catch(err){ if(msg) msg.textContent = err.message; }
 });
